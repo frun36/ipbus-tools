@@ -675,14 +675,14 @@ class RegisterMap:
         @classmethod 
         def describe_read(cls, address, words_num):
             register = []
-            for w in range(0, words_num):
+            for w in range(0, words_num-1):
                   register.append(cls.get_register(address+w,0,32))
             return register
            
         @classmethod
         def describe_write(cls, address, words_num):
             register = []
-            for w in range(0, words_num):
+            for w in range(0, words_num-1):
                   register.append(cls.get_register(address+w,0,32))
             return register
         
