@@ -104,7 +104,7 @@ class TransactionHeader:
         self.info_code = info_code
     
     def __repr__(self) -> str:
-        return colors['cyan'] + \
+        return colors['blue'] + \
                f"Protocol Version: 0x{self.protocol_version:01x} | " \
                f"Transaction ID: 0x{self.transaction_id:03x} | " \
                f"Words: 0x{self.words:02x} | " \

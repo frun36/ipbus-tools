@@ -3,9 +3,8 @@
 import glob
 
 import ipbus_parser
-import sys
 import curses
-# import culour
+import culour
 
 file_list = glob.glob("packets/*.bin")
 file_list.sort()
@@ -15,29 +14,23 @@ def read_file(filename):
         data = f.read()
     return data
 
-def display_packet(stdscr, packet):
+def display_packet(stdscr, filename, packet):
     stdscr.clear()
     max_y, max_x = stdscr.getmaxyx()
     packet_str = str(packet)
     
+    stdscr.addstr(0, 0, f"Filename: {filename}")
+
     # Truncate the string if it's too long to fit on the screen
     for i, line in enumerate(packet_str.splitlines()):
-        if i >= max_y:
+        if i+1 >= max_y:
             break
-        # culour.addstr(stdscr, i, 0, line[:max_x])
-        stdscr.addstr(i, 0, line[:max_x])
-    
+        culour.addstr(stdscr, i+1, 0, line[:max_x])
+        # stdscr.addstr(i, 0, line[:max_x])
     stdscr.refresh()
 
 
 def main(stdscr):
-    curses.curs_set(0)
-
-    curses.start_color()
-    curses.use_default_colors()
-    for i in range(0, curses.COLORS):
-        curses.init_pair(i + 1, i, -1)
-
     file_list = glob.glob("packets/*.bin")
     file_list.sort()
     
@@ -49,6 +42,7 @@ def main(stdscr):
     
     index = len(file_list) - 1  # Start with the most recent file
     reparse = True
+
     while True:
         if reparse:
             data = read_file(file_list[index])
@@ -57,10 +51,8 @@ def main(stdscr):
             except ValueError as e:
                 packet = f"Value error: {e}"
             reparse = False
-
-            # stdscr.addstr(0, 0, f"Filename: {file_list[index]}")
-        
-        display_packet(stdscr, packet)
+       
+            display_packet(stdscr, file_list[index][8:], packet)
         
         key = stdscr.getch()
         
