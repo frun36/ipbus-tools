@@ -21,14 +21,11 @@ while True:
     filename = f"packets/{timestamp}.bin"
     with open(filename, "wb") as f:
         f.write(data)
-    
-    with open(filename, "rb") as f:
-        data = f.read()
 
-        try:
-            print(ipbus_parser.Packet.from_le_bytes(data)) # This assumes little endianness
-        except ValueError as e:
-            print("Value error:", e, file=sys.stderr) 
+    try:
+        print(ipbus_parser.Packet.from_le_bytes(data)) # This assumes little endianness
+    except ValueError as e:
+        print("Value error:", e, file=sys.stderr) 
     print("Sent %d bytes" % sent)
 
 # First (status packet) is sent as big endian. Consecutive packets are little endian
