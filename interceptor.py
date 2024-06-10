@@ -2,6 +2,7 @@
 
 import socket
 import sys
+import datetime
 
 import ipbus_parser
 
@@ -13,15 +14,21 @@ sock = socket.socket(socket.AF_INET, # Internet
 sock.bind((UDP_IP, UDP_PORT))
 
 while True:
-    data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-    # print("Received packet")
-    # for i in range(0, len(data), 4):
-    #     print(' '.join(format(x, '02x') for x in data[i:i+4]))
+    data, addr = sock.recvfrom(1024)
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S%f")
     sent = sock.sendto(data, addr)
-    try:
-        print(ipbus_parser.Packet.from_le_bytes(data)) # This assumes little endianness
-    except ValueError as e:
-        print("Value error:", e, file=sys.stderr) 
+
+    filename = f"packets/{timestamp}.bin"
+    with open(filename, "wb") as f:
+        f.write(data)
+    
+    with open(filename, "rb") as f:
+        data = f.read()
+
+        try:
+            print(ipbus_parser.Packet.from_le_bytes(data)) # This assumes little endianness
+        except ValueError as e:
+            print("Value error:", e, file=sys.stderr) 
     print("Sent %d bytes" % sent)
 
 # First (status packet) is sent as big endian. Consecutive packets are little endian
