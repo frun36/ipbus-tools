@@ -1,3 +1,6 @@
+from ipbus_parser import Transaction
+from ipbus_parser import TransactionHeader
+
 class RegisterMap:
         _register_map={
         0x0: {
@@ -656,7 +659,7 @@ class RegisterMap:
                                 params.append("Operation is not aligned with register layout")
                                 break
                           elif desc != "BITS_NOT_USED":
-                                params.append(desc)
+                                params.append("[" + str(key[0]) + "," + str(key[1]) + "] " + desc)
                     return params
               
 
@@ -664,24 +667,54 @@ class RegisterMap:
         def get_register(cls, address, bit_start, len):
             if address in cls._register_map:
                 reg = cls._register_map[address]
-                params = cls.read_params(reg, bit_start, len)
-                params.insert(0, reg["brief"])
+                params = (reg["brief"], cls.read_params(reg, bit_start, len))
                 return params
             else:
                 return "Uknown register: " + str(address)
 
-        @classmethod
-        def describe_transaction(cls, transaction_type, bytes):
-                reg_address = 0
-                bit_position = 0
-                words = cls.bytes_to_words(bytes)
+        @classmethod 
+        def describe_read(cls, address, words_num):
+            register = []
+            for w in range(0, words_num):
+                  register.append(cls.get_register(address+w,0,32))
+            return register
            
         @classmethod
-        def bytes_to_words(words):
-                for w in range(0, len(words), 4):
-                        word_bytes = bytes[w:w + 4]
-                        word = int.from_bytes(word_bytes, byteorder='little')
-                        yield word
+        def describe_write(cls, address, words_num):
+            register = []
+            for w in range(0, words_num):
+                  register.append(cls.get_register(address+w,0,32))
+            return register
+        
+        @classmethod
+        def describe_RMWbits(cls, words):
+            address = words[0]
+            bit_start = cls.find_first_zero_bit_position(words[1], 32)
+            len = cls.find_last_zero_bit_position(words[1],32) - bit_start + 1
+            return cls.get_register(address, bit_start, len)
+        
+        @classmethod
+        def describe_RMWsum(cls, words): 
+             address = words[0]
+             return cls.get_register(address, 0, 31)
+              
+        @classmethod
+        def find_first_zero_bit_position(mask: int, bit_length: int) -> int:
+            for i in range(bit_length):
+                if (mask & (1 << i)) == 0:
+                    return i
+            return -1
+        
+        @classmethod
+        def find_last_zero_bit_position(mask: int, bit_length: int) -> int:
+            last_zero_position = -1
+            for i in range(bit_length - 1, -1, -1):
+                if (mask & (1 << i)) == 0:
+                    last_zero_position = i
+                    break
+            return last_zero_position
 
 
-print(RegisterMap.get_register(0x3A, 0, 32))
+#print(RegisterMap.get_register(0x6A, 0, 4))
+
+print(RegisterMap.describe_read(0x62, 4))
