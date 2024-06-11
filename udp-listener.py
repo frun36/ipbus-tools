@@ -87,5 +87,3 @@ class UDPToBinaryFile(RawUDPListener):
         with open(self.filepath, 'ab') as f:
             for packet in buffered_packets:
                 f.write(packet)
-        
-        print(f"Packets saved to {self.filepath}")
