@@ -4,7 +4,6 @@ import glob
 
 import ipbus_parser
 import curses
-import culour
 
 file_list = glob.glob("packets/*.bin")
 file_list.sort()

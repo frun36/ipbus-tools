@@ -1,25 +1,14 @@
-colors = {
-    'red': '\033[91m',
-    'green': '\033[92m',
-    'yellow': '\033[93m',
-    'blue': '\033[94m',
-    'purple': '\033[95m',
-    'cyan': '\033[96m',
-    'white': '\033[97m',
-    'end_color': '\033[0m'
-}
-
 class Packet:
     def __init__(self, header, transactions) -> None:
         self.header = header
         self.transactions = transactions
 
     def __repr__(self) -> str:        
-        result = colors['red'] + '-' * 8 + f" BEGIN PACKET 0x{self.header.packet_id:04x} " + '-' * 8 + colors['end_color'] + "\n\n"
+        result = '-' * 8 + f" BEGIN PACKET 0x{self.header.packet_id:04x} " + '-' * 8 + "\n\n"
         result += repr(self.header) + "\n\n"
         for (i, transaction) in enumerate(self.transactions):
-            result += f"{colors['purple']}Transaction 0x{i:02x}:{colors['end_color']}\n{repr(transaction)}\n"
-        result += colors['red'] + '-' * 8 + f" END PACKET 0x{self.header.packet_id:04x} " + '-' * 8 + colors['end_color'] + "\n"
+            result += f"Transaction 0x{i:02x}:\n{repr(transaction)}\n"
+        result += '-' * 8 + f" END PACKET 0x{self.header.packet_id:04x} " + '-' * 8 + "\n"
         return result
 
     @classmethod
@@ -54,12 +43,11 @@ class PacketHeader:
         self.packet_type = packet_type
     
     def __repr__(self) -> str:
-        return colors['yellow'] + \
-               f"Protocol Version: 0x{self.protocol_version:01x} | " \
+        return f"Protocol Version: 0x{self.protocol_version:01x} | " \
                f"RSVD: 0x{self.rsvd:01x} | " \
                f"Packet ID: 0x{self.packet_id:04x} | " \
                f"Byte Order Qualifier: 0x{self.byte_order_qualifier:01x} | " \
-               f"Packet Type: 0x{self.packet_type:01x}" + colors['end_color']
+               f"Packet Type: 0x{self.packet_type:01x}"
 
     @classmethod
     def from_le_bytes(cls, bytes):
@@ -104,12 +92,12 @@ class TransactionHeader:
         self.info_code = info_code
     
     def __repr__(self) -> str:
-        return colors['blue'] + \
+        return \
                f"Protocol Version: 0x{self.protocol_version:01x} | " \
                f"Transaction ID: 0x{self.transaction_id:03x} | " \
                f"Words: 0x{self.words:02x} | " \
                f"Type ID: 0x{self.type_id:01x} | " \
-               f"Info code: 0x{self.info_code:01x}" + colors['end_color']
+               f"Info code: 0x{self.info_code:01x}"
 
     @classmethod
     def from_le_bytes(cls, bytes):
