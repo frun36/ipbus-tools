@@ -24,8 +24,7 @@ def display_packet(stdscr, filename, packet):
     for i, line in enumerate(packet_str.splitlines()):
         if i+1 >= max_y:
             break
-        culour.addstr(stdscr, i+1, 0, line[:max_x])
-        # stdscr.addstr(i, 0, line[:max_x])
+        stdscr.addstr(i, 0, line[:max_x])
     stdscr.refresh()
 
 
