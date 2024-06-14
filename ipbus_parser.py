@@ -9,13 +9,17 @@ colors = {
     'end_color': '\033[0m'
 }
 
+from known_packets import KnownPackets, PacketTypes
+
 class Packet:
-    def __init__(self, header, transactions) -> None:
+    def __init__(self, header, transactions, type) -> None:
         self.header = header
         self.transactions = transactions
+        self.type = type
 
     def __repr__(self) -> str:        
         result = colors['red'] + '-' * 8 + f" BEGIN PACKET 0x{self.header.packet_id:04x} " + '-' * 8 + colors['end_color'] + "\n\n"
+        result += colors['green'] + self.type + "\n\n" if self.type else ""
         result += repr(self.header) + "\n\n"
         for (i, transaction) in enumerate(self.transactions):
             result += f"{colors['purple']}Transaction 0x{i:02x}:{colors['end_color']}\n{repr(transaction)}\n"
@@ -25,6 +29,7 @@ class Packet:
     @classmethod
     def from_le_bytes(cls, bytes):
         header = PacketHeader.from_le_bytes(bytes[0:4])
+        type = KnownPackets.check_packet(bytes)
         transactions = []
 
         curr_index = 4
@@ -33,7 +38,7 @@ class Packet:
             transactions.append(transaction)
             curr_index += 4 * transaction.get_total_words()
 
-        return cls(header, transactions)
+        return cls(header, transactions, type)
     
     @staticmethod
     def bytes_to_le_word(bytes):
@@ -61,12 +66,16 @@ class PacketHeader:
                f"Byte Order Qualifier: 0x{self.byte_order_qualifier:01x} | " \
                f"Packet Type: 0x{self.packet_type:01x}" + colors['end_color']
 
+    def __bytes__(self):
+        return bytes([self.protocol_version, self.rsvd, self.packet_id, self.byte_order_qualifier, self.packet_type])
+
     @classmethod
     def from_le_bytes(cls, bytes):
         packet_type = bytes[0] & 0x0f
         byte_order_qualifier = bytes[0] >> 4
         if byte_order_qualifier != 0xF:
             raise ValueError(f"Invalid byte order qualifier 0x{byte_order_qualifier:01x} - perhaps the packet is big endian?")
+        
         packet_id = bytes[1] + (bytes[2] << 8)
         rsvd = bytes[3] & 0x0f
         protocol_version = bytes[3] >> 4
