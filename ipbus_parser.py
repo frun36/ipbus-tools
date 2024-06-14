@@ -1,7 +1,8 @@
 class Packet:
-    def __init__(self, header, transactions) -> None:
+    def __init__(self, header, transactions, endianness) -> None:
         self.header = header
         self.transactions = transactions
+        self.endianness = endianness
 
     def __repr__(self) -> str:        
         result = '-' * 8 + f" BEGIN PACKET 0x{self.header.packet_id:04x} " + '-' * 8 + "\n\n"
@@ -12,7 +13,20 @@ class Packet:
         return result
 
     @classmethod
-    def from_le_bytes(cls, bytes):
+    def from_bytes(cls, bytes):
+        print(type(bytes))
+        if bytes[3] & 0xf0 == 0xf0:
+            endianness = "big"
+            for i in range(0, len(bytes), 4):
+                bytes[i:i+4] = reversed(bytes[i:i+4])
+        else:
+            endianness = "little"
+        
+        return cls.from_le_bytes(bytes, endianness)
+
+
+    @classmethod
+    def from_le_bytes(cls, bytes, endianness="little"):
         header = PacketHeader.from_le_bytes(bytes[0:4])
         transactions = []
 
@@ -22,7 +36,7 @@ class Packet:
             transactions.append(transaction)
             curr_index += 4 * transaction.get_total_words()
 
-        return cls(header, transactions)
+        return cls(header, transactions, endianness)
     
     @staticmethod
     def bytes_to_le_word(bytes):

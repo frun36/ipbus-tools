@@ -11,7 +11,7 @@ file_list.sort()
 def read_file(filename):
     with open(filename, "rb") as f:
         data = f.read()
-    return data
+    return bytearray(data)
 
 def display_packet(stdscr, filename, packet):
     stdscr.clear()
@@ -45,7 +45,7 @@ def main(stdscr):
         if reparse:
             data = read_file(file_list[index])
             try:
-                packet = ipbus_parser.Packet.from_le_bytes(data)
+                packet = ipbus_parser.Packet.from_bytes(data)
             except ValueError as e:
                 packet = f"Value error: {e}"
             reparse = False
