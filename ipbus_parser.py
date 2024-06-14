@@ -1,3 +1,9 @@
+from enum import Enum
+
+class Endianness(Enum):
+    BIG = "big"
+    LITTLE = "little"
+
 class Packet:
     def __init__(self, header, transactions, endianness) -> None:
         self.header = header
@@ -16,17 +22,17 @@ class Packet:
     def from_bytes(cls, bytes):
         print(type(bytes))
         if bytes[3] & 0xf0 == 0xf0:
-            endianness = "big"
+            endianness = Endianness.BIG
             for i in range(0, len(bytes), 4):
                 bytes[i:i+4] = reversed(bytes[i:i+4])
         else:
-            endianness = "little"
+            endianness = Endianness.LITTLE
         
         return cls.from_le_bytes(bytes, endianness)
 
 
     @classmethod
-    def from_le_bytes(cls, bytes, endianness="little"):
+    def from_le_bytes(cls, bytes, endianness=Endianness.LITTLE):
         header = PacketHeader.from_le_bytes(bytes[0:4])
         transactions = []
 
@@ -75,15 +81,14 @@ class PacketHeader:
         return cls(protocol_version, rsvd, packet_id, byte_order_qualifier, packet_type)
     
 class Transaction:
-    def __init__(self, header, words, word_labels) -> None:
+    def __init__(self, header, words) -> None:
         self.header = header
         self.words = words
-        self.word_labels = word_labels
 
     def __repr__(self) -> str:
         result = str(self.header) + "\n"
-        for (word_label, word) in zip(self.word_labels, self.words):
-            result += f"{word_label:.<32}0x{word:08x}\n"
+        for word in self.words:
+            result += f"{repr(word)}\n"
         return result
 
     @classmethod
@@ -92,10 +97,12 @@ class Transaction:
         word_labels = header.get_payload_fields()
         last_byte = 4 + len(word_labels) * 4
         words = Packet.bytes_to_le_word(bytes[4:last_byte])
-        return cls(header, words, word_labels)
+
+        words = list(map(lambda t : TransactionWord(t[0], t[1]), zip(word_labels, words)))
+        return cls(header, words)
     
     def get_total_words(self):
-        return 1 + len(self.word_labels)
+        return 1 + len(self.words)
 
 class TransactionHeader:
     def __init__(self, protocol_version, transaction_id, words, type_id, info_code) -> None:
@@ -158,7 +165,18 @@ class TransactionHeader:
                 return [] # Not sure if should really be empty?
             case _:
                 raise ValueError(f"Invalid info code value 0x{self.info_code:01x} for transaction ID 0x{self.transaction_id:03x}")
-    
+
+class TransactionWord:
+    def __init__(self, word_label, word) -> None:
+        self.word_label = word_label
+        self.word = word
+
+    def __repr__(self) -> str:
+        return f"{self.word_label:.<48}0x{self.word:08x}"
+
+word = TransactionWord("dupa", 123)
+print(word)
+
 # print(Packet.from_le_bytes([0xf0, 0x00, 0x00, 0x20, 0x4f, 0x01, 0x00, 0x20, 0x0e, 0x00, 0x00, 0x00, 0xff, 0xfc, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x1f, 0x01, 0x01, 0x20, 0x66, 0x00, 0x00, 0x00, 0xb4, 0x25, 0x00, 0x00, 0x1f, 0x01, 0x02, 0x20, 0x64, 0x00, 0x00, 0x00, 0x33, 0x26, 0x00, 0x00, 0x1f, 0x01, 0x03, 0x20, 0x68, 0x00, 0x00, 0x00, 0xb2, 0x26, 0x00, 0x00, 0x1f, 0x01, 0x04, 0x20, 0x62, 0x00, 0x00, 0x00, 0x31, 0x27, 0x00, 0x00, 0x1f, 0x01, 0x05, 0x20, 0x60, 0x00, 0x00, 0x00, 0xb0, 0x27, 0x00, 0x00]))
 
 # test_transaction = Transaction.from_le_bytes([0x4f, 0x01, 0x00, 0x20, 0x0e, 0x00, 0x00, 0x00, 0xff, 0xfc, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00])

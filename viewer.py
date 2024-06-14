@@ -16,19 +16,42 @@ def read_file(filename):
 def display_packet(stdscr, filename, packet):
     stdscr.clear()
     max_y, max_x = stdscr.getmaxyx()
-    packet_str = str(packet)
     
-    stdscr.addstr(0, 0, f"Filename: {filename}")
+    stdscr.addstr(0, 0, ' ' * (max_x - 1), curses.color_pair(1))
+    stdscr.addstr(0, 0, f"Filename: {filename}"[:max_x], curses.color_pair(1))
 
-    # Truncate the string if it's too long to fit on the screen
-    for i, line in enumerate(packet_str.splitlines()):
-        if i+1 >= max_y:
-            break
-        stdscr.addstr(i, 0, line[:max_x])
+    stdscr.addstr(2, 0, repr(packet.header), curses.color_pair(2))
+    curr_line = 4
+    all_shown = True
+    for transaction in packet.transactions:
+        if curr_line >= max_y:
+            all_shown = False
+            break 
+        stdscr.addstr(curr_line, 0, repr(transaction.header)[:max_x], curses.color_pair(3))
+        curr_line += 1
+        for word in transaction.words:
+            if curr_line >= max_y:
+                all_shown = False
+                break 
+            stdscr.addstr(curr_line, 0, repr(word)[:max_x])
+            curr_line += 1
+        curr_line += 1
+
+    stdscr.addstr(max_y - 1, 0, ' ' * (max_x - 1), curses.color_pair(1))
+    stdscr.addstr(max_y - 1, 0, f"{'All lines shown' if all_shown else 'Resize for more'}; q - quit", curses.color_pair(1))
+
     stdscr.refresh()
 
 
 def main(stdscr):
+    curses.start_color()
+    curses.use_default_colors()
+
+    # Curses color pairs
+    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_GREEN) # for app menus
+    curses.init_pair(2, curses.COLOR_CYAN, -1) # for packet headers
+    curses.init_pair(3, curses.COLOR_MAGENTA, -1) # for transaction headers
+
     file_list = glob.glob("packets/*.bin")
     file_list.sort()
     
