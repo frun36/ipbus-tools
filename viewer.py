@@ -13,12 +13,15 @@ def read_file(filename):
 def display_packet(stdscr, filename, packet):
     stdscr.clear()
     max_y, max_x = stdscr.getmaxyx()
-    
+    ui_header_height = 1
     stdscr.addstr(0, 0, ' ' * (max_x - 1), curses.color_pair(1))
     stdscr.addstr(0, 0, f"Filename: {filename}"[:max_x], curses.color_pair(1))
+    if packet.label:
+        stdscr.addstr(1, 0, f"Label: {packet.label}"[:max_x], curses.color_pair(1))
+        ui_header_height = 2
 
-    stdscr.addstr(2, 0, repr(packet.header)[:max_x], curses.color_pair(2))
-    curr_line = 4
+    stdscr.addstr(ui_header_height + 2, 0, repr(packet.header)[:max_x], curses.color_pair(2))
+    curr_line = ui_header_height + 4
     all_shown = True
     for transaction in packet.transactions:
         if curr_line >= max_y:
