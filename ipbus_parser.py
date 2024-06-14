@@ -34,6 +34,7 @@ class Packet:
     @classmethod
     def from_le_bytes(cls, bytes, endianness=Endianness.LITTLE):
         header = PacketHeader.from_le_bytes(bytes[0:4])
+        type = KnownPackets.check_packet(bytes)
         transactions = []
 
         curr_index = 4
@@ -75,6 +76,7 @@ class PacketHeader:
         byte_order_qualifier = bytes[0] >> 4
         if byte_order_qualifier != 0xF:
             raise ValueError(f"Invalid byte order qualifier 0x{byte_order_qualifier:01x} - perhaps the packet is big endian?")
+        
         packet_id = bytes[1] + (bytes[2] << 8)
         rsvd = bytes[3] & 0x0f
         protocol_version = bytes[3] >> 4
