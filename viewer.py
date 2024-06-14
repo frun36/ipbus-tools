@@ -4,6 +4,9 @@ import glob
 
 import ipbus_parser
 import curses
+from extra_output import ExtraOutput, DisplayMode
+
+display_mode = 0
 
 def read_file(filename):
     with open(filename, "rb") as f:
@@ -32,15 +35,40 @@ def display_packet(stdscr, filename, packet):
         for word in transaction.words:
             if curr_line >= max_y:
                 all_shown = False
-                break 
+                break
             stdscr.addstr(curr_line, 0, repr(word)[:max_x])
+
+            curr_line, all_shown = extra_word_output(stdscr, curr_line, max_y, all_shown, word, transaction)
             curr_line += 1
+        curr_line, all_shown = extra_transaction_output(stdscr, curr_line, max_y, all_shown, transaction)
         curr_line += 1
 
     stdscr.addstr(max_y - 1, 0, ' ' * (max_x - 1), curses.color_pair(1))
     stdscr.addstr(max_y - 1, 0, f"{'All lines shown' if all_shown else 'Resize for more'}; q - quit; r - refresh file list", curses.color_pair(1))
 
     stdscr.refresh()
+
+def extra_word_output(stdscr, curr_line, max_y, all_shown,  word, transaction):
+    extra_word = ExtraOutput.transaction_word(display_mode, word, transaction.header.type_id)
+    if extra_word:
+        for line in extra_word:
+            curr_line += 1
+            if curr_line >= max_y:
+                all_shown = False
+                break 
+            stdscr.addstr(curr_line, 0, f"-> {line}", curses.color_pair(2))
+    return curr_line, all_shown
+
+def extra_transaction_output(stdscr, curr_line, max_y, all_shown, transaction):
+    extra_word = ExtraOutput.transaction(display_mode,transaction)
+    if extra_word:
+        for line in extra_word:
+            if curr_line >= max_y:
+                all_shown = False
+                break 
+            stdscr.addstr(curr_line, 0, f"-> {line}", curses.color_pair(2))
+            curr_line += 1
+    return curr_line, all_shown
 
 def reparse_and_display(stdscr, file):
     data = read_file(file)
