@@ -4,10 +4,7 @@ class Endianness(Enum):
     BIG = "big"
     LITTLE = "little"
 
-from known_packets import KnownPackets, PacketTypes
-
 class Packet:
-<<<<<<< HEAD
     def __init__(self, header, transactions, endianness, label) -> None:
         self.header = header
         self.transactions = transactions
@@ -16,16 +13,6 @@ class Packet:
 
     def __repr__(self) -> str:        
         result = '-' * 8 + f" BEGIN PACKET 0x{self.header.packet_id:04x} " + '-' * 8 + "\n\n"
-=======
-    def __init__(self, header, transactions, type) -> None:
-        self.header = header
-        self.transactions = transactions
-        self.type = type
-
-    def __repr__(self) -> str:        
-        result = colors['red'] + '-' * 8 + f" BEGIN PACKET 0x{self.header.packet_id:04x} " + '-' * 8 + colors['end_color'] + "\n\n"
-        result += colors['green'] + self.type + "\n\n" if self.type else ""
->>>>>>> e4f903bb6d47498de9329bf76f568a6e3a7c48d1
         result += repr(self.header) + "\n\n"
         for (i, transaction) in enumerate(self.transactions):
             result += f"Transaction 0x{i:02x}:\n{repr(transaction)}\n"
@@ -33,7 +20,6 @@ class Packet:
         return result
 
     @classmethod
-<<<<<<< HEAD
     def from_bytes(cls, bytes):
         print(type(bytes))
         if bytes[3] & 0xf0 == 0xf0:
@@ -44,12 +30,6 @@ class Packet:
             endianness = Endianness.LITTLE
         
         return cls.from_le_bytes(bytes, endianness)
-=======
-    def from_le_bytes(cls, bytes):
-        header = PacketHeader.from_le_bytes(bytes[0:4])
-        type = KnownPackets.check_packet(bytes)
-        transactions = []
->>>>>>> e4f903bb6d47498de9329bf76f568a6e3a7c48d1
 
 
     @classmethod
@@ -64,11 +44,7 @@ class Packet:
             transactions.append(transaction)
             curr_index += 4 * transaction.get_total_words()
 
-<<<<<<< HEAD
         return cls(header, transactions, endianness, label)
-=======
-        return cls(header, transactions, type)
->>>>>>> e4f903bb6d47498de9329bf76f568a6e3a7c48d1
     
     @staticmethod
     def bytes_to_le_word(bytes):
@@ -96,9 +72,6 @@ class PacketHeader:
                f"Packet Type: 0x{self.packet_type:01x}"
     def __bytes__(self):
         return bytes([self.packet_type, self.byte_order_qualifier, self.packet_id, self.rsvd, self.protocol_version])
-
-    def __bytes__(self):
-        return bytes([self.protocol_version, self.rsvd, self.packet_id, self.byte_order_qualifier, self.packet_type])
 
     @classmethod
     def from_le_bytes(cls, bytes):
@@ -145,11 +118,7 @@ class TransactionHeader:
         self.info_code = info_code
     
     def __repr__(self) -> str:
-<<<<<<< HEAD
         return \
-=======
-        return colors['blue'] + \
->>>>>>> e4f903bb6d47498de9329bf76f568a6e3a7c48d1
                f"Protocol Version: 0x{self.protocol_version:01x} | " \
                f"Transaction ID: 0x{self.transaction_id:03x} | " \
                f"Words: 0x{self.words:02x} | " \
