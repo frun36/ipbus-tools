@@ -18,7 +18,7 @@ while True:
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S%f")
     sent = sock.sendto(data, addr)
 
-    filename = f"packets/{timestamp}.bin"
+    filename = f"packets/{timestamp}_req.bin"
     with open(filename, "wb") as f:
         f.write(data)
 
