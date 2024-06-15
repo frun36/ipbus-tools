@@ -17,14 +17,16 @@ def display_packet(stdscr, filename, packet):
     stdscr.clear()
     max_y, max_x = stdscr.getmaxyx()
     ui_header_height = 1
-
+    filename_label = "Filename :"
+    labels_padding = 5
+    header_color = curses.color_pair(4) if filename[-7:] == "req.bin" else curses.color_pair(5)
     # Upper bar
-    stdscr.addstr(0, 0, ' ' * (max_x - 1), curses.color_pair(1))
-    stdscr.addstr(0, 0, f"Filename: {filename}"[:max_x], curses.color_pair(4) if filename[-7:] == "req.bin" else curses.color_pair(5))
+    stdscr.addstr(0, 0, ' ' * (max_x - 1), header_color)
+    stdscr.addstr(0, 0, f"{filename_label} {filename}"[:max_x], header_color)
     
     # Label
     if packet.label:
-        stdscr.addstr(1, 0, f"Label: {packet.label}"[:max_x], curses.color_pair(1))
+        stdscr.addstr(0, len(filename) + len(filename_label ) + labels_padding, f"Label: {packet.label}"[:max_x], header_color)
         ui_header_height = 2
 
     curr_line = ui_header_height + 1
