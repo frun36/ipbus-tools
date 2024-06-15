@@ -7,7 +7,9 @@ class DisplayMode(Enum):
 
 class ExtraOutput:
     @classmethod
-    def transaction_word(cls, mode ,trans_word: TransactionWord, type):
+    def transaction_word(cls, mode, trans_word: TransactionWord, type, infoCode):
+        if infoCode != 0xf:
+            return None        
         match mode:
             case 0:
                 match type:
@@ -22,6 +24,8 @@ class ExtraOutput:
 
     @classmethod
     def transaction(cls, mode, transaction: Transaction):
+        if transaction.header.info_code != 0xf:
+            return None 
         match mode:
             case 0:
                 match transaction.header.type_id:
