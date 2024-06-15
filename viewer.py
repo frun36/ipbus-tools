@@ -2,7 +2,7 @@
 
 import glob
 
-from ipbus_parser import Packet
+from ipbus_parser import Packet, PacketType
 import curses
 
 def read_file(filename):
@@ -14,21 +14,31 @@ def display_packet(stdscr, filename, packet):
     stdscr.clear()
     max_y, max_x = stdscr.getmaxyx()
     ui_header_height = 1
+
+    # Upper bar
     stdscr.addstr(0, 0, ' ' * (max_x - 1), curses.color_pair(1))
     stdscr.addstr(0, 0, f"Filename: {filename}"[:max_x], curses.color_pair(1))
+    
+    # Label
     if packet.label:
         stdscr.addstr(1, 0, f"Label: {packet.label}"[:max_x], curses.color_pair(1))
         ui_header_height = 2
 
+    # Packet header
     stdscr.addstr(ui_header_height + 2, 0, repr(packet.header)[:max_x], curses.color_pair(2))
     curr_line = ui_header_height + 4
+
+    # Transactions
     all_shown = True
     for transaction in packet.transactions:
+        # Header
         if curr_line >= max_y:
             all_shown = False
             break 
         stdscr.addstr(curr_line, 0, repr(transaction.header)[:max_x], curses.color_pair(3))
         curr_line += 1
+        
+        # Words
         for word in transaction.words:
             if curr_line >= max_y:
                 all_shown = False
@@ -37,6 +47,7 @@ def display_packet(stdscr, filename, packet):
             curr_line += 1
         curr_line += 1
 
+    # Bottom bar
     stdscr.addstr(max_y - 1, 0, ' ' * (max_x - 1), curses.color_pair(1))
     stdscr.addstr(max_y - 1, 0, f"{'All lines shown' if all_shown else 'Resize for more'}; q - quit; r - refresh file list", curses.color_pair(1))
 
