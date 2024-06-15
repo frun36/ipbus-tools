@@ -2,7 +2,7 @@
 
 import glob
 
-import ipbus_parser
+from ipbus_parser import Packet
 import curses
 
 def read_file(filename):
@@ -45,7 +45,7 @@ def display_packet(stdscr, filename, packet):
 def reparse_and_display(stdscr, file):
     data = read_file(file)
     try:
-        packet = ipbus_parser.Packet.from_bytes(data)
+        packet = Packet.from_bytes(data)
     except ValueError as e:
         packet = f"Value error: {e}"
 

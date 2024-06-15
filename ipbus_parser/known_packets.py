@@ -1,7 +1,6 @@
-from ipbus_parser import *
 from enum import Enum
 
-class PacketLabels:
+class PacketLabels(Enum):
     STATUS = "STATUS PACKET"
     SYNC = "SYNC"
     NON = "NON"
