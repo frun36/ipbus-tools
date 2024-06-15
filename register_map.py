@@ -810,7 +810,7 @@ class RegisterMap:
                 (16,31): "BITS_NOT_USED" 
             },
         0xF7:{
-                "brief": "ATX mega128a3u microcode timestamp":
+                "brief": "ATX mega128a3u microcode timestamp",
                 (0,5): "Second",
                 (6,11): "Minute",
                 (12,16): "Hour",
@@ -857,10 +857,59 @@ class RegisterMap:
         0x101:{
                 "brief": "TCM counters FIFO load",
                 (0,31):  "TCM counters FIFO load"
-            }
+            },
+        0x2A00:{
+                "brief": "Bitmask of orbit fill in BC 0-15",
+                (0,0): "BC 0 - beam 1",
+                (1,1): "BC 0 - beam 2",
 
+                (2,2): "BC 1 - beam 1",
+                (3,3): "BC 1 - beam 2",
+                
+                (4,4): "BC 2 - beam 1",
+                (5,5): "BC 2 - beam 2",
+                
+                (6,6): "BC 3 - beam 1",
+                (7,7): "BC 3 - beam 2",
+
+                (8,8): "BC 4 - beam 1",
+                (9,9): "BC 4 - beam 2",
+
+                (10,10): "BC 5 - beam 1",
+                (11,11): "BC 5 - beam 2",
+
+                (12,12): "BC 6 - beam 1",
+                (13,13): "BC 6 - beam 2",
+
+                (14,14): "BC 7 - beam 1",
+                (15,15): "BC 7 - beam 2",
+
+                (16,16): "BC 8 - beam 1",
+                (17,17): "BC 8 - beam 2",
+
+                (18,18): "BC 9 - beam 1",
+                (19,19): "BC 9 - beam 2",
+
+                (20,20): "BC 10 - beam 1",
+                (21,21): "BC 10 - beam 2",
+
+                (22,22): "BC 11 - beam 1",
+                (23,23): "BC 11 - beam 2",
+
+                (24,24): "BC 12 - beam 1",
+                (25,25): "BC 12 - beam 2",
+
+                (26,26): "BC 13 - beam 1",
+                (27,27): "BC 13 - beam 2",
+
+                (28,28): "BC 14 - beam 1",
+                (29,29): "BC 14 - beam 2",
+
+                (30,30): "BC 15 - beam 1",
+                (31,31): "BC 15 - beam 2"
+            }
+            
         }
-    
         def __init__(self):
                 pass
         @classmethod
