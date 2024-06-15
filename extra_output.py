@@ -1,5 +1,7 @@
-from ipbus_parser import *
+from ipbus_parser.transaction import Transaction, TransactionWord
 from register_map import RegisterMap
+from enum import Enum
+
 class DisplayMode(Enum):
     FULL = 0
     OMIT_REGISTERS_DESC = 1

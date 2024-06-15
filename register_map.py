@@ -1,5 +1,4 @@
-from ipbus_parser import Transaction
-from ipbus_parser import TransactionHeader
+from ipbus_parser.transaction import *
 
 class RegisterMap:
         _register_map={
@@ -915,10 +914,10 @@ class RegisterMap:
         @classmethod
         def read_params(cls, reg_info, bit_start, len):
               if (bit_start, bit_start+len-1) in reg_info:
-                    return reg_info[(bit_start, bit_start+len-1)]
+                    return [reg_info["brief"], f"[{bit_start},{bit_start+len-1}] {reg_info[(bit_start, bit_start+len-1)]}"]
               else:
                     start_aligned = False
-                    params = []
+                    params = [reg_info["brief"]]
                     for key, desc in reg_info.items():
                           if key == "brief": 
                                 continue
@@ -935,7 +934,7 @@ class RegisterMap:
                                 params.append("Operation is not aligned with register layout")
                                 break
                           elif desc != "BITS_NOT_USED":
-                                params.append(f"[{key[0]}, {key[1]}]  {desc}")
+                                params.append(f"[{key[0]}, {key[1]}]  {desc}")      
                     return params
               
 
@@ -944,7 +943,7 @@ class RegisterMap:
         def get_register(cls, address, bit_start, len):
             if address in cls._register_map:
                 reg = cls._register_map[address]
-                params = [reg["brief"]] + cls.read_params(reg, bit_start, len)
+                params = cls.read_params(reg, bit_start, len)
                 return params
             else:
                 return [f"{cls.UnknownRegisterLabel:.<45}0x{address:08x}"]

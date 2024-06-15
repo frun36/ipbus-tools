@@ -9,7 +9,7 @@ class KnownPackets:
     status_header = "f1000020"
     headers = \
     {
-        status_header: PacketLabels.STATUS
+        status_header: PacketLabels.STATUS.value
     }
     
     @classmethod
