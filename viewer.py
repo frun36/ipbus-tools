@@ -4,9 +4,12 @@ import glob
 
 from ipbus_parser import Packet, PacketType, TransactionInfoCode, TransactionType
 import curses
-from extra_output import ExtraOutput, DisplayMode
+from reg_info import RegInfo, DisplayMode
 
-display_mode = 0
+class ViewerSettings:
+    display_mode = DisplayMode.FULL.value
+    filename_label = "Filename :"
+    labels_padding = 5
 
 def read_file(filename):
     with open(filename, "rb") as f:
@@ -16,17 +19,17 @@ def read_file(filename):
 def display_packet(stdscr, filename, packet):
     stdscr.clear()
     max_y, max_x = stdscr.getmaxyx()
+
     ui_header_height = 1
-    filename_label = "Filename :"
-    labels_padding = 5
     header_color = curses.color_pair(4) if filename[-7:] == "req.bin" else curses.color_pair(5)
+
     # Upper bar
     stdscr.addstr(0, 0, ' ' * (max_x - 1), header_color)
-    stdscr.addstr(0, 0, f"{filename_label} {filename}"[:max_x], header_color)
+    stdscr.addstr(0, 0, f"{ViewerSettings.filename_label} {filename}"[:max_x], header_color)
     
     # Label
     if packet.label:
-        stdscr.addstr(0, len(filename) + len(filename_label ) + labels_padding, f"Label: {packet.label}"[:max_x], header_color)
+        stdscr.addstr(0, len(filename) + len(ViewerSettings.filename_label ) + ViewerSettings.labels_padding, f"Label: {packet.label}"[:max_x], header_color)
         ui_header_height = 2
 
     curr_line = ui_header_height + 1
@@ -59,19 +62,19 @@ def display_packet(stdscr, filename, packet):
                 break
             stdscr.addstr(curr_line, 0, repr(word)[:max_x])
 
-            curr_line, all_shown = extra_word_output(stdscr, curr_line, max_y, all_shown, word, transaction)
+            curr_line, all_shown = reg_info_word(stdscr, curr_line, max_y, all_shown, word, transaction)
             curr_line += 1
-        curr_line, all_shown = extra_transaction_output(stdscr, curr_line, max_y, all_shown, transaction)
+        curr_line, all_shown = reg_info_transaction(stdscr, curr_line, max_y, all_shown, transaction)
         curr_line += 1
 
     # Bottom bar
     stdscr.addstr(max_y - 1, 0, ' ' * (max_x - 1), curses.color_pair(1))
-    stdscr.addstr(max_y - 1, 0, f"{'All lines shown' if all_shown else 'Resize for more'}; q - quit; r - refresh file list", curses.color_pair(1))
+    stdscr.addstr(max_y - 1, 0, f"{'All lines shown' if all_shown else 'Resize for more'}; q - quit; r - refresh file list; m - change display mode", curses.color_pair(1))
 
     stdscr.refresh()
 
-def extra_word_output(stdscr, curr_line, max_y, all_shown,  word, transaction):
-    extra_word = ExtraOutput.transaction_word(display_mode, word, transaction.header.type_id, transaction.header.info_code)
+def reg_info_word(stdscr, curr_line, max_y, all_shown,  word, transaction):
+    extra_word = RegInfo.transaction_word(ViewerSettings.display_mode, word, transaction.header.type_id, transaction.header.info_code)
     if extra_word:
         for line in extra_word:
             curr_line += 1
@@ -81,8 +84,8 @@ def extra_word_output(stdscr, curr_line, max_y, all_shown,  word, transaction):
             stdscr.addstr(curr_line, 0, f"-> {line}", curses.color_pair(2))
     return curr_line, all_shown
 
-def extra_transaction_output(stdscr, curr_line, max_y, all_shown, transaction):
-    extra_word = ExtraOutput.transaction(display_mode,transaction)
+def reg_info_transaction(stdscr, curr_line, max_y, all_shown, transaction):
+    extra_word = RegInfo.transaction(ViewerSettings.display_mode,transaction)
     if extra_word:
         for line in extra_word:
             if curr_line >= max_y:
@@ -155,6 +158,9 @@ def main(stdscr):
             reparse = True
         elif key == ord('r'):
             file_list = get_file_list()
+        elif key == ord('m'):
+            ViewerSettings.display_mode = DisplayMode.next_mode(ViewerSettings.display_mode)
+            reparse = True
         elif key == ord('q'):  # Quit on 'q' key press
             break
             
