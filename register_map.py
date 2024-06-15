@@ -631,7 +631,234 @@ class RegisterMap:
                 (12,13):  "Trigger 3 output mode",
                 (14,14):  "Trigger 3 output enabled",
                 (15,31):  "BITS_NOT_USED"
+            },
+        0x70:{
+                "brief": "Trigger 5 counter: OrA | FV0 Or",
+                (0,31): "Trigger 5 counter: OrA | FV0 Or" 
+            },
+        0x71:{
+                "brief": "Trigger 4 counter: OrC | OuterRings",
+                (0,31): "Trigger 4 counter: OrC | OuterRings"
+            },
+        0x72:{
+                "brief": "Trigger 2 counter: SemiCentral | Nchannels",
+                (0,31): "Trigger 2 counter: SemiCentral | Nchannels"
+            },
+        0x73:{
+                "brief": "Trigger 1 counter: Central | Charge",
+                (0,31): "Trigger 1 counter: Central | Charge" 
+            },
+        0x74:{
+                "brief":  "Trigger 3 counter: Vertex | InnerRings",
+                (0,31): "Trigger 3 counter: Vertex | InnerRings"
+            },
+        0x75:{
+                "brief": "Background 0 counter: NoiseA | Noise",
+                (0,31):  "Background 0 counter: NoiseA | Noise"
+            },
+        0x76:{
+                "brief": "Background 1 counter: NoiseC | (not used)",
+                (0,31):  "Background 1 counter: NoiseC | (not used)"
+            },
+        0x77:{
+                "brief": "Background 2 counter: Total noise | Noise",
+                (0,31):  "Background 2 counter: Total noise | Noise"
+            },
+        0x78:{
+                "brief": "Background 3 counter: CB-OrA | CB-Or",
+                (0,31): "Background 3 counter: CB-OrA | CB-Or"
+            },
+        0x79:{
+                "brief": "Background 4 counter: CB-OrC | (not used)",
+                (0,31): "Background 4 counter: CB-OrC | (not used)"
+            },
+        0x7A:{
+                "brief": "Background 5 counter: Interaction | (not used)",
+                (0,31):  "Background 5 counter: Interaction | (not used)"
+            },
+        0x7B:{
+                "brief": "Background 6 counter: CB-Interaction | (not used)",
+                (0,31): "Background 6 counter: CB-Interaction | (not used)"
+            },
+        0x7C:{
+                "brief": "Background 7 counter: CB-Vertex | CB-InnerRings",
+                (0,31): "Background 7 counter: CB-Vertex | CB-InnerRings"
+            },
+        0x7D:{
+                "brief": "Background 8 counter: BackgroundA | (not used)",
+                (0,31):  "Background 8 counter: BackgroundA | (not used)"
+            },
+        0x7E:{
+                "brief": "Background 9 counter: BackgroundC | BackgroundC",
+                (0,31): "Background 9 counter: BackgroundC | BackgroundC"
+            },
+        0xD8:{
+                "brief": "Mode settings, commands",
+                (0,3): "Data emulation mode",
+                (4,7): "Triggers emulation mode",
+                (8,8): "Reset orbit sync",
+                (9,9): "Reset data counters",
+                (10,10): "Reset start of emulation",
+                (11,11): "Reset Rx error",
+                (12,12): "Reset GBT",
+                (13,13): "Reset Rx phase error",
+                (14,14): "Reset readout FSM",
+                (15,15): "Reset error report FIFO",
+                (16,19): "CTP emulation run type",
+                (20,20): "HB response",
+                (21,21): "Bypass mode",
+                (22,22): "Force idle",
+                (23,23): "HB reject",
+                (24,24): "Shift Rx phase",
+                (25,25): "EMU orbit jump",
+                (26,31): "BITS_NOT_USED" 
+            },
+        0xD9:{
+                "brief": "Trigger respond mask",
+                (0,31): "Trigger respond mask" 
+            },
+        0xDA:{
+                "brief": "Emulated data pattern",
+                (0,3): "Number of words in event 0",
+                (4,7):  "Number of words in event 1",
+                (8,11): "Number of words in event 2",
+                (12,15): "Number of words in event 3",
+                (16,19): "Number of words in event 4",
+                (20,23): "Number of words in event 5",
+                (24,27): "Number of words in event 6",
+                (28,31): "Number of words in event 7"
+            },
+        0xDC:{
+                "brief": "Emulated triggers pattern LSB",
+                (0,31): "Emulated triggers pattern LSB"
+            },
+        0xDD:{
+                "brief": "Emulated triggers pattern MSB",
+                (0,31): "Emulated triggers pattern MSB"
+            },
+        0xDE:{
+                "brief": "Emulated triggers value",
+                (0,31): "Emulated triggers value" 
+            },
+        0xDF:{
+                "brief": "Emulation rate",
+                (0,15): "Data",
+                (16,31): "Triggers" 
+            },
+        0xE0:{
+                "brief": "Generators frequency offset",
+                (0,11): "Data generator",
+                (12,15): "BITS_NOT_USED",
+                (16,27): "Triggers generator",
+                (28,31): "Emulated HBr triggers rate"
+            },
+        0xE3:{
+                "brief": "BCID offset",
+                (0,11): "BCID shift to compensate signal processing delay" 
+            },
+        0xE4:{
+                "brief": "Data select trigger mask",
+                (0,31):  "Data select trigger mask - event data with trigger's  BCID is sent (only for triggered mode)"
+            },
+        0xE8:{
+                "brief": "Modes, status",
+                (0,0): "Phase aligner CPLL lock",
+                (1,1): "Rx wordclk ready",
+                (2,2): "Rx frameclk ready",
+                (3,3): "MGT link ready",
+                (4,4): "Tx reset done",
+                (5,5): "Tx FSM reset done",
+                (6,6): "GBT Rx ready",
+                (7,7): "GBT Rx error",
+                (8,8): "GBT Rx error latch",
+                (9,9): "Rx phase error",
+                (10,15): "BITS_NOT_USED",
+                (16,19): "Board run mode",
+                (20,23): "BCID sync mode",
+                (24,27): "Rx phase",
+                (28,31): "CRU run mode" 
+            },
+        0xE9:{
+                "brief": "CRU orbit",
+                (0,31): "CRU orbit" 
+            },
+        0xEA:{
+                "brief": "CRU BC",
+                (0,11): "CRU BC",
+                (12,31): "BITS_NOT_USED" 
+            },
+        0xEB:{
+                "brief": "FIFO count",
+                (0,15): "Raw",
+                (16,31): "Selector" 
+            },
+        0xEC:{
+                "brief": "Selector first hit dropped orbit",
+                (0,31): "Selector first hit dropped orbit" 
+            },
+        0xED:{
+                "brief": "Selector last hit dropped orbit",
+                (0,31): "Selector last hit dropped orbit" 
+            },
+        0xEE:{
+                "brief": "Selector hits dropped",
+                (0,31): "Selector hits dropped" 
+            },
+        0xEF:{
+                "brief": "Readout rate",
+                (0,15): "Readout rate",
+                (16,31): "BITS_NOT_USED" 
+            },
+        0xF7:{
+                "brief": "ATX mega128a3u microcode timestamp":
+                (0,5): "Second",
+                (6,11): "Minute",
+                (12,16): "Hour",
+                (17,22): "Year",
+                (23,26): "Month",
+                (27,31): "Day" 
+            },
+        0xF8:{
+                "brief": "Register for FW upgrade in normal mode",
+                (0,31): "Register for FW upgrade in normal mode"
+            },
+        0xF9:{
+                "brief": "Register for FW upgrade in normal mode",
+                (0,31): "Register for FW upgrade in normal mode"
+            },
+        0xFA:{
+                "brief": "Register for FW upgrade in normal mode",
+                (0,31): "Register for FW upgrade in normal mode"
+            },
+        0xFB:{
+                "brief": "Register for FW upgrade in normal mode",
+                (0,31): "Register for FW upgrade in normal mode"
+            },
+        0xFC:{
+                "brief": "FPGA temperature",
+                (0,31): "FPGA temperature" 
+            },
+        0xFD:{
+                "brief": "1V power",
+                (0,31): "1V power" 
+            },
+        0xFE:{
+                "brief":  "1.8V power",
+                (0,31): "1.8V power"
+            },
+        0xFF:{
+                "brief": "FPGA firmware timestamp",
+                (0,31): "FPGA firmware timestamp" 
+            },
+        0x100:{
+                "brief": "TCM counters values readout",
+                (0,31): "TCM counters values readout" 
+            },
+        0x101:{
+                "brief": "TCM counters FIFO load",
+                (0,31):  "TCM counters FIFO load"
             }
+
         }
     
         def __init__(self):
