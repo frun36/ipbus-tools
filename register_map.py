@@ -959,30 +959,45 @@ class RegisterMap:
         @classmethod
         def describe_RMWbits(cls, words):
             address = words[0]
-            bit_start = cls.find_first_zero_bit_position(words[1], 32)
-            len = cls.find_last_zero_bit_position(words[1],32) - bit_start + 1
-            return cls.get_register(address, bit_start, len)
+            mask = words[1]
+            bit_ranges = cls.get_zero_bit_ranges(mask, 32)
+            descriptions = []
+            for bit_start, length in bit_ranges:
+                descriptions.extend(cls.get_register(address, bit_start, length))
+            return descriptions
         
         @classmethod
-        def describe_RMWsum(cls, words): 
-             address = words[0]
-             return cls.get_register(address, 0, 31)
+        def describe_RMWsum(cls, words):
+            address = words[0]
+            mask = words[1]
+            bit_ranges = cls.get_zero_bit_ranges(mask, 32)
+            descriptions = []
+            for bit_start, length in bit_ranges:
+                descriptions.extend(cls.get_register(address, bit_start, length))
+            return descriptions
               
+        
         @classmethod
-        def find_first_zero_bit_position(cls, mask: int, bit_length: int) -> int:
+        def get_zero_bit_ranges(cls, mask, bit_length):
+            bit_ranges = []
+            current_range_start = None
+            current_range_length = 0
+
             for i in range(bit_length):
                 if (mask & (1 << i)) == 0:
-                    return i
-            return -1
-        
-        @classmethod
-        def find_last_zero_bit_position(cls, mask: int, bit_length: int) -> int:
-            last_zero_position = -1
-            for i in range(bit_length - 1, -1, -1):
-                if (mask & (1 << i)) == 0:
-                    last_zero_position = i
-                    break
-            return last_zero_position
+                    if current_range_start is None:
+                        current_range_start = i
+                    current_range_length += 1
+                else:
+                    if current_range_start is not None:
+                        bit_ranges.append((current_range_start, current_range_length))
+                        current_range_start = None
+                        current_range_length = 0
+
+            if current_range_start is not None:
+                bit_ranges.append((current_range_start, current_range_length))
+
+            return bit_ranges
 
 
 #print(RegisterMap.get_register(0x6A, 0, 4))
