@@ -69,7 +69,7 @@ def display_packet(stdscr, filename, packet):
     stdscr.refresh()
 
 def extra_word_output(stdscr, curr_line, max_y, all_shown,  word, transaction):
-    extra_word = ExtraOutput.transaction_word(display_mode, word, transaction.header.type_id)
+    extra_word = ExtraOutput.transaction_word(display_mode, word, transaction.header.type_id, transaction.header.info_code)
     if extra_word:
         for line in extra_word:
             curr_line += 1
