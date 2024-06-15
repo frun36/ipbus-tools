@@ -17,7 +17,7 @@ def display_packet(stdscr, filename, packet):
 
     # Upper bar
     stdscr.addstr(0, 0, ' ' * (max_x - 1), curses.color_pair(1))
-    stdscr.addstr(0, 0, f"Filename: {filename}"[:max_x], curses.color_pair(1))
+    stdscr.addstr(0, 0, f"Filename: {filename}"[:max_x], curses.color_pair(4) if filename[-7:] == "req.bin" else curses.color_pair(5))
     
     # Label
     if packet.label:
@@ -75,6 +75,9 @@ def main(stdscr):
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_GREEN) # for app menus
     curses.init_pair(2, curses.COLOR_CYAN, -1) # for packet headers
     curses.init_pair(3, curses.COLOR_MAGENTA, -1) # for transaction headers
+
+    curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_MAGENTA) # for request packets
+    curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_CYAN) # for response packets
 
     stdscr.keypad(True)
 
