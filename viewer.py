@@ -10,6 +10,15 @@ class ViewerSettings:
     display_mode = DisplayMode.FULL.value
     filename_label = "Filename :"
     labels_padding = 5
+    first_transaction = 0
+
+    @classmethod
+    def first_trans_up(cls):
+        if cls.first_transaction != 0:
+            cls.first_transaction -= 1
+    @classmethod 
+    def first_trans_down(cls):
+        cls.first_transaction += 1
 
 def read_file(filename):
     with open(filename, "rb") as f:
@@ -44,8 +53,12 @@ def display_packet(stdscr, filename, packet):
     # Transactions
     curr_line += 2
     all_shown = True
+    line_idx = -1
     for transaction in packet.transactions:
         # Header
+        line_idx += 1
+        if line_idx < ViewerSettings.first_transaction:
+            continue
         if curr_line >= max_y:
             all_shown = False
             break 
@@ -149,12 +162,20 @@ def main(stdscr):
                 curses.beep()
                 continue
             index += 1
+            ViewerSettings.first_transaction = 0
             reparse = True
         elif key == curses.KEY_LEFT:
             if index <= 0:
                 curses.beep()
                 continue
             index -= 1
+            ViewerSettings.first_transaction = 0
+            reparse = True
+        elif key == curses.KEY_DOWN:
+            ViewerSettings.first_trans_down()
+            reparse = True
+        elif key == curses.KEY_UP:
+            ViewerSettings.first_trans_up()
             reparse = True
         elif key == ord('r'):
             file_list = get_file_list()
