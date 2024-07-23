@@ -26,6 +26,6 @@ Packets get saved in the `packets` directory.
 ### `swt`
 This module allows for converting raw IPbus packets into corresponding FIT-SWT sequences. To run use
 ```
-python3 -m swt.swt
+python3 -m swt.swt [-h] [-o OUTPUT] [-v] filename
 ```
 while in the `ipbus-tools` directory.

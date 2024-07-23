@@ -19,7 +19,6 @@ class Packet:
 
     @classmethod
     def from_bytes(cls, bytes):
-        print(type(bytes))
         if bytes[3] & 0xf0 == 0xf0:
             endianness = Endianness.BIG
             for i in range(0, len(bytes), 4):
