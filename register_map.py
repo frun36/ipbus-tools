@@ -927,7 +927,7 @@ class RegisterMap:
                                 start_aligned = True
                           if key[0] > bit_start + len-1:
                                 break
-                          if key[1] > bit_start + len-1:
+                          if key[1] > bit_start + len:
                                 params.append("Operation is not aligned with register layout")
                                 break
                           if start_aligned == False:
@@ -938,6 +938,7 @@ class RegisterMap:
                     return params
               
 
+        UnknownRegisterLabel = "Unknown register"
         @classmethod
         def get_register(cls, address, bit_start, len):
             if address in cls._register_map:
@@ -945,21 +946,15 @@ class RegisterMap:
                 params = cls.read_params(reg, bit_start, len)
                 return params
             else:
-                return "Uknown register: " + str(address)
+                return [f"{cls.UnknownRegisterLabel:.<45}0x{address:08x}"]
 
         @classmethod 
-        def describe_read(cls, address, words_num):
-            register = []
-            for w in range(0, words_num-1):
-                  register.append(cls.get_register(address+w,0,32))
-            return register
+        def describe_read(cls, address):
+            return cls.get_register(address, 0,32)
            
         @classmethod
-        def describe_write(cls, address, words_num):
-            register = []
-            for w in range(0, words_num-1):
-                  register.append(cls.get_register(address+w,0,32))
-            return register
+        def describe_write(cls, address):
+            return cls.get_register(address,0,32)
         
         @classmethod
         def describe_RMWbits(cls, words):
@@ -1006,5 +1001,3 @@ class RegisterMap:
 
 
 #print(RegisterMap.get_register(0x6A, 0, 4))
-
-print(RegisterMap.describe_read(0x62, 4))
