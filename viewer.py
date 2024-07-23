@@ -64,7 +64,7 @@ def display_packet(stdscr, filename, packet):
             break 
         stdscr.addstr(curr_line, 
                       0, 
-                      f"ID: {transaction.header.transaction_id} | {TransactionType(transaction.header.type_id)} | {TransactionInfoCode(transaction.header.info_code)}"[:max_x], 
+                      f"ID: {transaction.header.transaction_id} | {TransactionType(transaction.header.type_id)} {transaction.header.words} | {TransactionInfoCode(transaction.header.info_code)}"[:max_x], 
                       curses.color_pair(3))
         curr_line += 1
 

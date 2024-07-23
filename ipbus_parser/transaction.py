@@ -23,6 +23,9 @@ class Transaction:
     
     def get_total_words(self):
         return 1 + len(self.words)
+    
+    def get_words(self):
+        return self.words
 
 class TransactionHeader:
     def __init__(self, protocol_version, transaction_id, words, type_id, info_code) -> None:
@@ -93,3 +96,6 @@ class TransactionWord:
 
     def __repr__(self) -> str:
         return f"{self.word_label:.<48}0x{self.word:08x}"
+    
+    def get_value(self):
+        return self.word
