@@ -10,9 +10,21 @@ import ipbus_parser as ipb
 # seq2 = SwtSequence(cmd3)
 # print(seq1 + seq2)
 
-header = ipb.TransactionHeader(2, 0, 2, ipb.TransactionType.WRITE.value, ipb.TransactionInfoCode.REQUEST.value)
-transaction = ipb.Transaction(header, [ipb.TransactionWord('test', 0), ipb.TransactionWord('test', 1), ipb.TransactionWord('test', 2)])
-print(transaction)
+def read_file(filename):
+    with open(filename, "rb") as f:
+        data = f.read()
+    return bytearray(data)
 
-seq = SwtSequence.from_ipbus_transaction(transaction)
+# packet_bytes = read_file("packets/20240617_172134026620_req.bin")
+# packet_bytes = read_file("packets/20240617_172134063481_req.bin")
+packet_bytes = read_file("packets/20240617_172201787944_req.bin")
+packet = ipb.Packet.from_bytes(packet_bytes)
+print(packet)
+
+# header = ipb.TransactionHeader(2, 0, 2, ipb.TransactionType.WRITE.value, ipb.TransactionInfoCode.REQUEST.value)
+# transaction = ipb.Transaction(header, [ipb.TransactionWord('test', 0), ipb.TransactionWord('test', 1), ipb.TransactionWord('test', 2)])
+# print(transaction)
+
+# seq = SwtSequence.from_ipbus_transaction(transaction)
+seq = SwtSequence.from_ipbus_packet(packet)
 print(seq)

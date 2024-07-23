@@ -3,8 +3,8 @@ from enum import Enum
 class TransactionType(Enum):
     READ = 0b000
     WRITE = 0b001
-    READ_OR = 0b010
-    WRITE_AND = 0b011
+    READ_AND = 0b010
+    WRITE_OR = 0b011
     READ_SUM = 0b100
 
 class SwtWord:
