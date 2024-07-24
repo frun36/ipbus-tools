@@ -15,7 +15,7 @@ for packet in capture.sniff_continuously():
     try:
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S%f")
         packet_bytes = bytes.fromhex(packet.data.data)
-        print(ipbus_parser.Packet.from_le_bytes(packet_bytes)) # This assumes little endianness
+        print(ipbus_parser.Packet.from_bytes(packet_bytes)) # This assumes little endianness
         print(f"{packet.ip.src}")
         if packet.ip.src == UDP_IP:
             filename = f"packets/{timestamp}_res.bin"

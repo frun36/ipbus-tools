@@ -23,7 +23,7 @@ while True:
         f.write(data)
 
     try:
-        print(ipbus_parser.Packet.from_le_bytes(data)) # This assumes little endianness
+        print(ipbus_parser.Packet.from_bytes(data)) # This assumes little endianness
     except ValueError as e:
         print("Value error:", e, file=sys.stderr) 
     print("Sent %d bytes" % sent)

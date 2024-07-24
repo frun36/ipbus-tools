@@ -13,13 +13,13 @@ class KnownPackets:
     }
     
     @classmethod
-    def check_header(cls, header: bytes):
+    def check_header(cls, header: bytes) -> str | None:
         if header.hex() in cls.headers:
             return cls.headers[header.hex()]
         return None
     
     @classmethod 
-    def check_packet(cls, packet):
+    def check_packet(cls, packet: bytes) -> str | None:
         type = cls.check_header(packet[0:4])
         if type != None: 
             return type

@@ -1,9 +1,94 @@
 from .known_packets import KnownPackets
-from .parameters import Endianness
+from .parameters import Endianness, PacketType
 from .transaction import Transaction
 
+class PacketHeader:
+    """Represents an IPbus packet header
+
+    Attributes
+    ----------
+    protocol_version : int
+        The protocol version (0x02)
+    rsvd : int
+        Reserved
+    packet_id : int
+        Packet ID, useful for the reliability mechanism
+    byte_order_qualifier : int
+        Should be 0xff
+    packet_type : PacketType
+
+    Methods
+    -------
+    __init__(self):
+        Constructor
+
+    __repr__(self):
+        For display purposes
+
+    from_le_bytes(cls, bytes: bytearray):
+        Creates the header from raw little endian bytes
+    """
+
+    def __init__(self, protocol_version: int, rsvd : int, packet_id : int, byte_order_qualifier : int, packet_type: PacketType) -> None:
+        self.protocol_version = protocol_version
+        self.rsvd = rsvd
+        self.packet_id = packet_id
+        self.byte_order_qualifier = byte_order_qualifier
+        self.packet_type = packet_type
+    
+    def __repr__(self) -> str:
+        return f"Protocol Version: 0x{self.protocol_version:01x} | " \
+               f"RSVD: 0x{self.rsvd:01x} | " \
+               f"Packet ID: 0x{self.packet_id:04x} | " \
+               f"Byte Order Qualifier: 0x{self.byte_order_qualifier:01x} | " \
+               f"Packet Type: 0x{self.packet_type:01x}"
+    
+    def __bytes__(self):
+        return bytes([self.packet_type, self.byte_order_qualifier, self.packet_id, self.rsvd, self.protocol_version])
+
+    @classmethod
+    def from_le_bytes(cls, bytes: bytearray):
+        packet_type = bytes[0] & 0x0f
+        byte_order_qualifier = bytes[0] >> 4
+        if byte_order_qualifier != 0xF:
+            raise ValueError(f"Invalid byte order qualifier 0x{byte_order_qualifier:01x} - perhaps the packet is big endian?")
+        
+        packet_id = bytes[1] + (bytes[2] << 8)
+        rsvd = bytes[3] & 0x0f
+        protocol_version = bytes[3] >> 4
+        return cls(protocol_version, rsvd, packet_id, byte_order_qualifier, packet_type)
+
 class Packet:
-    def __init__(self, header, transactions, endianness, label) -> None:
+    """Represents an IPbus packet
+    
+    Attributes
+    ----------
+    header : PacketHeader
+        packet header  
+    transactions : list[Transaction]
+        list of transactions contained in the packet  
+    endianness : Endianness
+        the endianness of the packet  
+    label : str | None
+        label describing the packet, for display purposes  
+
+    Methods
+    -------
+    __init__(self):
+        Constructor
+
+    __repr__(self):
+        For display purposes
+
+    from_bytes(cls, bytes: bytearray):
+        Creates the packet from raw bytes (big endian (reverses bytes in words) 
+        or little endian)
+
+    from_le_bytes(cls, bytes: bytearray):
+        Creates the packet from raw little endian bytes
+    """
+
+    def __init__(self, header: PacketHeader, transactions: list[Transaction], endianness: Endianness, label: str | None) -> None:
         self.header = header
         self.transactions = transactions
         self.endianness = endianness
@@ -18,7 +103,7 @@ class Packet:
         return result
 
     @classmethod
-    def from_bytes(cls, bytes):
+    def from_bytes(cls, bytes: bytearray):
         if bytes[3] & 0xf0 == 0xf0:
             endianness = Endianness.BIG
             for i in range(0, len(bytes), 4):
@@ -30,9 +115,8 @@ class Packet:
 
 
     @classmethod
-    def from_le_bytes(cls, bytes, endianness=Endianness.LITTLE):
+    def from_le_bytes(cls, bytes: bytearray, endianness=Endianness.LITTLE):
         header = PacketHeader.from_le_bytes(bytes[0:4])
-        type = KnownPackets.check_packet(bytes)
         transactions = []
         label = KnownPackets.check_packet(bytes)
         curr_index = 4
@@ -42,32 +126,3 @@ class Packet:
             curr_index += 4 * transaction.get_total_words()
 
         return cls(header, transactions, endianness, label)
-
-class PacketHeader:
-    def __init__(self, protocol_version, rsvd, packet_id, byte_order_qualifier, packet_type) -> None:
-        self.protocol_version = protocol_version
-        self.rsvd = rsvd
-        self.packet_id = packet_id
-        self.byte_order_qualifier = byte_order_qualifier
-        self.packet_type = packet_type
-    
-    def __repr__(self) -> str:
-        return f"Protocol Version: 0x{self.protocol_version:01x} | " \
-               f"RSVD: 0x{self.rsvd:01x} | " \
-               f"Packet ID: 0x{self.packet_id:04x} | " \
-               f"Byte Order Qualifier: 0x{self.byte_order_qualifier:01x} | " \
-               f"Packet Type: 0x{self.packet_type:01x}"
-    def __bytes__(self):
-        return bytes([self.packet_type, self.byte_order_qualifier, self.packet_id, self.rsvd, self.protocol_version])
-
-    @classmethod
-    def from_le_bytes(cls, bytes):
-        packet_type = bytes[0] & 0x0f
-        byte_order_qualifier = bytes[0] >> 4
-        if byte_order_qualifier != 0xF:
-            raise ValueError(f"Invalid byte order qualifier 0x{byte_order_qualifier:01x} - perhaps the packet is big endian?")
-        
-        packet_id = bytes[1] + (bytes[2] << 8)
-        rsvd = bytes[3] & 0x0f
-        protocol_version = bytes[3] >> 4
-        return cls(protocol_version, rsvd, packet_id, byte_order_qualifier, packet_type)
