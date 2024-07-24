@@ -1,34 +1,23 @@
 from .utils import bytes_to_le_word
 
-class Transaction:
-    def __init__(self, header, words) -> None:
-        self.header = header
-        self.words = words
-
-    def __repr__(self) -> str:
-        result = str(self.header) + "\n"
-        for word in self.words:
-            result += f"{repr(word)}\n"
-        return result
-
-    @classmethod
-    def from_le_bytes(cls, bytes):
-        header = TransactionHeader.from_le_bytes(bytes[0:4])
-        word_labels = header.get_payload_fields()
-        last_byte = 4 + len(word_labels) * 4
-        words = bytes_to_le_word(bytes[4:last_byte])
-
-        words = list(map(lambda t : TransactionWord(t[0], t[1]), zip(word_labels, words)))
-        return cls(header, words)
-    
-    def get_total_words(self):
-        return 1 + len(self.words)
-    
-    def get_words(self):
-        return self.words
-
 class TransactionHeader:
-    def __init__(self, protocol_version, transaction_id, words, type_id, info_code) -> None:
+    """Represents the IPbus transaction header
+    
+    Attributes
+    ----------
+    protocol_version : int
+        0x02
+    transaction_id : int
+        ID within packet
+    words : int
+        Number of words
+    type_id : int
+        Type ID
+    info_code : int
+        Info code
+    """
+
+    def __init__(self, protocol_version: int, transaction_id: int, words: int, type_id: int, info_code: int) -> None:
         self.protocol_version = protocol_version
         self.transaction_id = transaction_id
         self.words = words
@@ -89,7 +78,10 @@ class TransactionHeader:
             case _:
                 raise ValueError(f"Invalid info code value 0x{self.info_code:01x} for transaction ID 0x{self.transaction_id:03x}")
 
+
 class TransactionWord:
+    """Represents a transaction word, with the label (str) and word value (int)"""
+
     def __init__(self, word_label, word) -> None:
         self.word_label = word_label
         self.word = word
@@ -99,3 +91,54 @@ class TransactionWord:
     
     def get_value(self):
         return self.word
+
+
+class Transaction:
+    """Represents a single IPbus transaction
+
+    Attributes
+    ----------
+    header : TransactionHeader
+        The transaction header
+    words : list[TransactionWord]
+        The words contained as payload
+
+
+    Methods
+    -------
+    from_le_bytes(cls, bytes):
+        Creates the transaction from little endian bytes
+    
+    get_total_words(self):
+        Total number of words (with header)
+    
+    def get_words(self):
+        List of words
+    """
+
+
+    def __init__(self, header: TransactionHeader, words: list[TransactionWord]) -> None:
+        self.header = header
+        self.words = words
+
+    def __repr__(self) -> str:
+        result = str(self.header) + "\n"
+        for word in self.words:
+            result += f"{repr(word)}\n"
+        return result
+
+    @classmethod
+    def from_le_bytes(cls, bytes: bytearray):
+        header = TransactionHeader.from_le_bytes(bytes[0:4])
+        word_labels = header.get_payload_fields()
+        last_byte = 4 + len(word_labels) * 4
+        words = bytes_to_le_word(bytes[4:last_byte])
+
+        words = list(map(lambda t : TransactionWord(t[0], t[1]), zip(word_labels, words)))
+        return cls(header, words)
+    
+    def get_total_word_count(self) -> int:
+        return 1 + len(self.words)
+    
+    def get_words(self) -> list[TransactionWord]:
+        return self.words

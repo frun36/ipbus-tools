@@ -29,7 +29,7 @@ class PacketHeader:
         Creates the header from raw little endian bytes
     """
 
-    def __init__(self, protocol_version: int, rsvd : int, packet_id : int, byte_order_qualifier : int, packet_type: PacketType) -> None:
+    def __init__(self, protocol_version: int, rsvd: int, packet_id: int, byte_order_qualifier: int, packet_type: PacketType) -> None:
         self.protocol_version = protocol_version
         self.rsvd = rsvd
         self.packet_id = packet_id
@@ -123,6 +123,6 @@ class Packet:
         while curr_index < len(bytes):
             transaction = Transaction.from_le_bytes(bytes[curr_index:])
             transactions.append(transaction)
-            curr_index += 4 * transaction.get_total_words()
+            curr_index += 4 * transaction.get_total_word_count()
 
         return cls(header, transactions, endianness, label)
