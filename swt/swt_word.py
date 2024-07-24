@@ -36,4 +36,5 @@ class SwtWord:
         return bytes
     
     def __str__(self) -> str:
-        return '0x' + ''.join(map(lambda x : f"{x:02x}", self.get_bytes()))
+        # Omits the first byte containing SWT info code
+        return '0x00' + ''.join(map(lambda x : f"{x:02x}", self.get_bytes()[1:]))
