@@ -2,7 +2,7 @@
 
 import glob
 
-from ipbus_parser import Packet, PacketType, TransactionInfoCode, TransactionType
+from ipbus_parser import Packet, PacketType, TransactionInfoCode, TransactionType, PacketTagger
 import curses
 from reg_info import RegInfo, DisplayMode
 
@@ -94,7 +94,7 @@ def reg_info_word(stdscr, curr_line, max_y, all_shown,  word, transaction):
             if curr_line >= max_y:
                 all_shown = False
                 break 
-            stdscr.addstr(curr_line, 0, f"-> {line}", curses.color_pair(2))
+            stdscr.addstr(curr_line, 0, f"-> {line}", curses.color_pair(6))
     return curr_line, all_shown
 
 def reg_info_transaction(stdscr, curr_line, max_y, all_shown, transaction):
@@ -104,7 +104,7 @@ def reg_info_transaction(stdscr, curr_line, max_y, all_shown, transaction):
             if curr_line >= max_y:
                 all_shown = False
                 break 
-            stdscr.addstr(curr_line, 0, f"-> {line}", curses.color_pair(2))
+            stdscr.addstr(curr_line, 0, f"-> {line}", curses.color_pair(6))
             curr_line += 1
     return curr_line, all_shown
 
@@ -112,6 +112,7 @@ def reparse_and_display(stdscr, file):
     data = read_file(file)
     try:
         packet = Packet.from_bytes(data)
+        PacketTagger.tag_packet(packet)
     except ValueError as e:
         packet = f"Value error: {e}"
 
@@ -131,6 +132,7 @@ def main(stdscr):
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_GREEN) # for app menus
     curses.init_pair(2, curses.COLOR_CYAN, -1) # for packet headers
     curses.init_pair(3, curses.COLOR_MAGENTA, -1) # for transaction headers
+    curses.init_pair(6, curses.COLOR_YELLOW, -1) # for register info
 
     curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_MAGENTA) # for request packets
     curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_CYAN) # for response packets

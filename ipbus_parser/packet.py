@@ -1,4 +1,3 @@
-from .known_packets import KnownPackets
 from .parameters import Endianness, PacketType
 from .transaction import Transaction
 
@@ -42,9 +41,6 @@ class PacketHeader:
                f"Packet ID: 0x{self.packet_id:04x} | " \
                f"Byte Order Qualifier: 0x{self.byte_order_qualifier:01x} | " \
                f"Packet Type: 0x{self.packet_type:01x}"
-    
-    def __bytes__(self):
-        return bytes([self.packet_type, self.byte_order_qualifier, self.packet_id, self.rsvd, self.protocol_version])
 
     @classmethod
     def from_le_bytes(cls, bytes: bytearray):
@@ -69,7 +65,7 @@ class Packet:
         list of transactions contained in the packet  
     endianness : Endianness
         the endianness of the packet  
-    label : str | None
+    label : str
         label describing the packet, for display purposes  
 
     Methods
@@ -88,11 +84,11 @@ class Packet:
         Creates the packet from raw little endian bytes
     """
 
-    def __init__(self, header: PacketHeader, transactions: list[Transaction], endianness: Endianness, label: str | None) -> None:
+    def __init__(self, header: PacketHeader, transactions: list[Transaction], endianness: Endianness) -> None:
         self.header = header
         self.transactions = transactions
         self.endianness = endianness
-        self.label = label
+        self.label = ""
 
     def __repr__(self) -> str:        
         result = '-' * 8 + f" BEGIN PACKET 0x{self.header.packet_id:04x} " + '-' * 8 + "\n\n"
@@ -118,11 +114,10 @@ class Packet:
     def from_le_bytes(cls, bytes: bytearray, endianness=Endianness.LITTLE):
         header = PacketHeader.from_le_bytes(bytes[0:4])
         transactions = []
-        label = KnownPackets.check_packet(bytes)
         curr_index = 4
         while curr_index < len(bytes):
             transaction = Transaction.from_le_bytes(bytes[curr_index:])
             transactions.append(transaction)
             curr_index += 4 * transaction.get_total_word_count()
 
-        return cls(header, transactions, endianness, label)
+        return cls(header, transactions, endianness)
