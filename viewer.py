@@ -6,6 +6,8 @@ from ipbus_parser import Packet, PacketType, TransactionInfoCode, TransactionTyp
 import curses
 from reg_info import RegInfo, DisplayMode
 
+import argparse
+
 class ViewerSettings:
     display_mode = DisplayMode.FULL.value
     filename_label = "Filename :"
@@ -118,12 +120,34 @@ def reparse_and_display(stdscr, file):
 
     display_packet(stdscr, file[8:], packet)
 
-def get_file_list():
-    file_list = glob.glob("packets/*.bin")
+def get_file_list(input_dir):
+    file_list = glob.glob(input_dir + "/*.bin")
     file_list.sort()
     return file_list
 
-def main(stdscr):
+def main():
+    parser = argparse.ArgumentParser(description="Allows for displaying IPbus packets saved as raw bytes")
+    
+    parser.add_argument('-f', '--filtered', action='store_true', help='Show packets from `filtered_packets` directory (instead of `packets`)')
+
+    args = parser.parse_args()
+
+    file_list = get_file_list("filtered_packets" if args.filtered else "packets")
+    
+    if not file_list:
+        stdscr.addstr(0, 0, "No .bin files found.")
+        stdscr.refresh()
+        stdscr.getch()
+        return
+    
+    index = len(file_list) - 1  # Start with the most recent file
+    reparse = True
+
+    stdscr = curses.initscr()
+    curses.noecho()
+    curses.cbreak()
+    stdscr.keypad(True)
+
     curses.start_color()
     curses.use_default_colors()
     curses.curs_set(False)
@@ -136,19 +160,6 @@ def main(stdscr):
 
     curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_MAGENTA) # for request packets
     curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_CYAN) # for response packets
-
-    stdscr.keypad(True)
-
-    file_list = get_file_list()
-    
-    if not file_list:
-        stdscr.addstr(0, 0, "No .bin files found.")
-        stdscr.refresh()
-        stdscr.getch()
-        return
-    
-    index = len(file_list) - 1  # Start with the most recent file
-    reparse = True
 
     while True:
         if reparse:
@@ -186,7 +197,16 @@ def main(stdscr):
             reparse = True
         elif key == ord('q'):  # Quit on 'q' key press
             break
+    
+    stdscr.clear()
+    stdscr.refresh()
+
+    curses.nocbreak()
+    stdscr.keypad(False)
+    curses.echo()
+    curses.curs_set(True)
+    curses.endwin()
             
 
 if __name__ == "__main__":
-    curses.wrapper(main)
+    main()
