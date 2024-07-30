@@ -10,7 +10,7 @@ import argparse
 
 class ViewerSettings:
     display_mode = DisplayMode.FULL.value
-    filename_label = "Filename :"
+    filename_label = "Filename:"
     labels_padding = 5
     first_transaction = 0
 
@@ -31,7 +31,6 @@ def display_packet(stdscr, filename, packet):
     stdscr.clear()
     max_y, max_x = stdscr.getmaxyx()
 
-    ui_header_height = 1
     header_color = curses.color_pair(4) if filename[-7:] == "req.bin" else curses.color_pair(5)
 
     # Upper bar
@@ -41,10 +40,9 @@ def display_packet(stdscr, filename, packet):
     # Label
     if packet.label:
         stdscr.addstr(0, len(filename) + len(ViewerSettings.filename_label ) + ViewerSettings.labels_padding, f"Label: {packet.label}"[:max_x], header_color)
-        ui_header_height = 2
 
-    curr_line = ui_header_height + 1
-
+    curr_line = 2
+    
     # Packet header
     stdscr.addstr(curr_line, 
                   0, 
@@ -118,7 +116,7 @@ def reparse_and_display(stdscr, file):
     except ValueError as e:
         packet = f"Value error: {e}"
 
-    display_packet(stdscr, file[8:], packet)
+    display_packet(stdscr, file, packet)
 
 def get_file_list(input_dir):
     file_list = glob.glob(input_dir + "/*.bin")

@@ -11,14 +11,16 @@ class SwtSequence:
     def __str__(self) -> str:
         result = ''
         for command in self.commands:
-            result += f'{command}\n'
-            #match command.type:
-            #    case TransactionType.READ | TransactionType.READ_AND | TransactionType.READ_SUM:
-            #        result += 'read\n' # ignores read timeouts
-            #    case TransactionType.WRITE | TransactionType.WRITE_OR:
-            #        pass
-            #    case _:
-            #        raise ValueError("Invalid transaction type value")
+            result += f'{command}'
+            out_counter = 0
+            match command.type:
+               case TransactionType.READ | TransactionType.READ_AND | TransactionType.READ_SUM:
+                   result += f'@OUT_{out_counter:04}\n'
+                   out_counter += 1
+               case TransactionType.WRITE | TransactionType.WRITE_OR:
+                   result += '\n'
+               case _:
+                   raise ValueError("Invalid transaction type value")
         return result
     
     def append_sequence(self, other):
