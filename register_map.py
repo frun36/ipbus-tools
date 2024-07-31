@@ -961,6 +961,8 @@ class RegisterMap:
             address = words[0]
             mask = words[1]
             bit_ranges = cls.get_zero_bit_ranges(mask, 32)
+            bit_ranges = bit_ranges + cls.get_one_bit_ranges(words[2], 32)
+            bit_ranges = list(dict.fromkeys(bit_ranges))
             descriptions = []
             for bit_start, length in bit_ranges:
                 descriptions.extend(cls.get_register(address, bit_start, length))
@@ -985,6 +987,28 @@ class RegisterMap:
 
             for i in range(bit_length):
                 if (mask & (1 << i)) == 0:
+                    if current_range_start is None:
+                        current_range_start = i
+                    current_range_length += 1
+                else:
+                    if current_range_start is not None:
+                        bit_ranges.append((current_range_start, current_range_length))
+                        current_range_start = None
+                        current_range_length = 0
+
+            if current_range_start is not None:
+                bit_ranges.append((current_range_start, current_range_length))
+
+            return bit_ranges
+        
+        @classmethod
+        def get_one_bit_ranges(cls, mask, bit_length):
+            bit_ranges = []
+            current_range_start = None
+            current_range_length = 0
+
+            for i in range(bit_length):
+                if (mask & (1 << i)) != 0:
                     if current_range_start is None:
                         current_range_start = i
                     current_range_length += 1

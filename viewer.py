@@ -81,11 +81,12 @@ def display_packet(stdscr, filename, packet):
                 case 0x1 | 0x3 | 0x4 | 0x5:
                     if idx == 0:
                         curr_line, all_shown = reg_info_word(stdscr, curr_line, max_y, all_shown, word, transaction)
+                        curr_line, all_shown = reg_info_transaction(stdscr, curr_line, max_y, all_shown, transaction)
                 case _:
                     pass
             idx += 1
             curr_line += 1
-        curr_line, all_shown = reg_info_transaction(stdscr, curr_line, max_y, all_shown, transaction)
+        #curr_line, all_shown = reg_info_transaction(stdscr, curr_line, max_y, all_shown, transaction)
         curr_line += 1
 
     # Bottom bar
@@ -108,6 +109,7 @@ def reg_info_word(stdscr, curr_line, max_y, all_shown,  word, transaction):
 def reg_info_transaction(stdscr, curr_line, max_y, all_shown, transaction):
     extra_word = RegInfo.transaction(ViewerSettings.display_mode,transaction)
     if extra_word:
+        curr_line += 1
         for line in extra_word:
             if curr_line >= max_y:
                 all_shown = False
