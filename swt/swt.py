@@ -14,8 +14,6 @@ def main():
     parser = argparse.ArgumentParser(description="Converts an IPbus packet into the corresponding SWT sequence")
     
     parser.add_argument('filename', type=str, help='The IPbus packet filename')
-    parser.add_argument('-o', '--output', type=str, default=sys.stdout, help='The output filename (default is stdout)')
-    parser.add_argument('-v', '--verbose', action='store_true', help='Increase output verbosity')
 
     args = parser.parse_args()
     
@@ -31,7 +29,7 @@ def main():
         print(packet)
 
     seq = SwtSequence.from_ipbus_packet(packet)
-    print(seq, file=args.output)
+    print(seq)
     
 if __name__ == '__main__':
     main()
