@@ -69,13 +69,21 @@ def display_packet(stdscr, filename, packet):
         curr_line += 1
 
         # Words
+        idx = 0
         for word in transaction.words:
             if curr_line >= max_y:
                 all_shown = False
                 break
             stdscr.addstr(curr_line, 0, repr(word)[:max_x])
-
-            curr_line, all_shown = reg_info_word(stdscr, curr_line, max_y, all_shown, word, transaction)
+            match transaction.header.type_id :
+                case 0x0 | 0x2:
+                    curr_line, all_shown = reg_info_word(stdscr, curr_line, max_y, all_shown, word, transaction)
+                case 0x1 | 0x3 | 0x4 | 0x5:
+                    if idx == 0:
+                        curr_line, all_shown = reg_info_word(stdscr, curr_line, max_y, all_shown, word, transaction)
+                case _:
+                    pass
+            idx += 1
             curr_line += 1
         curr_line, all_shown = reg_info_transaction(stdscr, curr_line, max_y, all_shown, transaction)
         curr_line += 1
