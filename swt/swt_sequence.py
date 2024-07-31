@@ -11,14 +11,12 @@ class SwtSequence:
     def __str__(self) -> str:
         result = ''
         for command in self.commands:
-            result += f'{command}'
-            out_counter = 0
+            result += str(command)
             match command.type:
                case TransactionType.READ | TransactionType.READ_AND | TransactionType.READ_SUM:
-                   result += f'@OUT_{out_counter:04}\n'
-                   out_counter += 1
+                   result += f',write\nread\n'
                case TransactionType.WRITE | TransactionType.WRITE_OR:
-                   result += '\n'
+                   result += ',write\n'
                case _:
                    raise ValueError("Invalid transaction type value")
         return result

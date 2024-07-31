@@ -37,4 +37,4 @@ class SwtWord:
     
     def __str__(self) -> str:
         # Omits the first byte containing SWT info code
-        return '0x00' + ''.join(map(lambda x : f"{x:02x}", self.get_bytes()[1:]))
+        return '0x0' + ''.join(map(lambda x : f"{x:02x}", self.get_bytes()[1:]))
