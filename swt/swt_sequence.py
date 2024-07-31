@@ -10,9 +10,9 @@ class SwtSequence:
 
     def __repr__(self) -> str:
         result = ''
+        out_counter = 0
         for command in self.commands:
             result += str(command)
-            out_counter = 0
             match command.type:
                case TransactionType.READ | TransactionType.READ_AND | TransactionType.READ_SUM:
                    result += f'@OUT_{out_counter:04}\n'
