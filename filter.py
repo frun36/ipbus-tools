@@ -27,7 +27,7 @@ def main():
             PacketTagger.tag_packet(packet)
             # print(filename, packet.label)
 
-            if not re.search("_res\\.bin", filename) and packet.label == "":
+            if packet.label == "" and not re.search("_res\\.bin", filename):
                 shutil.copyfile(filename, 'filtered_packets/' + os.path.basename(filename))
         except ValueError as ve:
             print(f'ValueError while parsing packet {filename}: {ve}')

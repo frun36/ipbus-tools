@@ -23,7 +23,8 @@ class PacketTagger:
         if len(packet.transactions) != 8:
             return False
         
-        transaction_words = [31, 11, 1, 11, 13, 10, 1, 4]
+        # transaction_words = [31, 11, 1, 11, 13, 10, 1, 4] # AGH compatibility mode
+        transaction_words = [33, 11, 1, 11, 13, 10, 1, 4]
         transaction_addresses = [0x00, 0x30, 0x50, 0x60, 0xd8, 0xe8, 0xf7, 0xfc]
         for i, transaction in enumerate(packet.transactions):
             if transaction.header.type_id != TransactionType.READ.value:
@@ -50,11 +51,16 @@ class PacketTagger:
 
     @staticmethod
     def is_pm_sync(packet):
-        if len(packet.transactions) != 5:
+        # if len(packet.transactions) != 5: # AGH Compatibility
+        #     return False
+
+        if len(packet.transactions) != 6:
             return False
         
-        transaction_words = [126, 64, 13, 1, 4]
-        transaction_addresses = [0x00, 0x7f, 0xd8, 0xf7, 0xfc]
+        # transaction_words = [126, 64, 13, 1, 4] # AGH Compatibility
+        # transaction_addresses = [0x00, 0x7f, 0xd8, 0xf7, 0xfc] # AGH Compatibility
+        transaction_words = [126, 64, 13, 10, 1, 4]
+        transaction_addresses = [0x00, 0x7f, 0xd8, 0xe8, 0xf7, 0xfc]
         for i, transaction in enumerate(packet.transactions):
             if transaction.header.type_id != TransactionType.READ.value:
                 return False
@@ -100,7 +106,7 @@ class PacketTagger:
             return False
         if transaction.header.words != 24:
             return False
-        if len(transaction.words) != 1 or transaction.words[0].word != 0x02c0:
+        if len(transaction.words) != 1 or transaction.words[0].word % 0x0200 != 0x00c0:
             return False
         return True
 
