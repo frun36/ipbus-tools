@@ -2,6 +2,7 @@
 
 import sys
 import datetime
+import re
 
 import pyshark
 import ipbus_parser
@@ -28,7 +29,7 @@ for packet in capture.sniff_continuously():
         
         with open("packets/" + filename, 'ab') as f:
             f.write(packet_bytes)
-        if ipb_packet.label == "":
+        if not re.search("_res\\.bin", filename) and packet.label == "":
             with open("filtered_packets/" + filename, 'ab') as f:
                 f.write(packet_bytes)
     except ValueError as e:
