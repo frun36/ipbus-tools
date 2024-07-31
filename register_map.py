@@ -1,7 +1,7 @@
 from ipbus_parser.transaction import *
 
 class RegisterMap:
-        _register_map={
+    tcm = {
         0x0: {
             "brief": "A-side phase delay",
             (0, 15): "A-side phase delay"
@@ -909,119 +909,839 @@ class RegisterMap:
             }
             
         }
-        def __init__(self):
-                pass
-        @classmethod
-        def read_params(cls, reg_info, bit_start, len):
-              if (bit_start, bit_start+len-1) in reg_info:
-                    return [reg_info["brief"], f"[{bit_start},{bit_start+len-1}] {reg_info[(bit_start, bit_start+len-1)]}"]
-              else:
-                    start_aligned = False
-                    params = [reg_info["brief"]]
-                    for key, desc in reg_info.items():
-                          if key == "brief": 
-                                continue
-                          if key[0] < bit_start: 
-                                continue
-                          if key[0] == bit_start:
-                                start_aligned = True
-                          if key[0] > bit_start + len-1:
-                                break
-                          if key[1] > bit_start + len:
-                                params.append("Operation is not aligned with register layout")
-                                break
-                          if start_aligned == False:
-                                params.append("Operation is not aligned with register layout")
-                                break
-                          elif desc != "BITS_NOT_USED":
-                                params.append(f"[{key[0]}, {key[1]}]  {desc}")      
-                    return params
-              
 
-        UnknownRegisterLabel = "Unknown register"
-        @classmethod
-        def get_register(cls, address, bit_start, len):
-            if address in cls._register_map:
-                reg = cls._register_map[address]
-                params = cls.read_params(reg, bit_start, len)
-                return params
+    pm = {
+        0x00:{
+            "brief": "TRG settings",
+            (0, 7): "OR gate",
+            (8, 8): "FDD coincidence mode on/off",
+            (9, 31): "BITS_NOT_USED",
+        },
+        0x01:{
+            "brief": "Ch01 settings",
+            (0, 11): "TDC value correction for channel's time alignment",
+            (12, 12): "Disable trigger generation",
+            (13, 31): "BITS_NOT_USED",
+        },
+        0x02:{
+            "brief": "Ch02 settings",
+            (0, 11): "TDC value correction for channel's time alignment",
+            (12, 12): "Disable trigger generation",
+            (13, 31): "BITS_NOT_USED",
+        },
+        0x03:{
+            "brief": "Ch03 settings",
+            (0, 11): "TDC value correction for channel's time alignment",
+            (12, 12): "Disable trigger generation",
+            (13, 31): "BITS_NOT_USED",
+        },
+        0x04:{
+            "brief": "Ch04 settings",
+            (0, 11): "TDC value correction for channel's time alignment",
+            (12, 12): "Disable trigger generation",
+            (13, 31): "BITS_NOT_USED",
+        },
+        0x05:{
+            "brief": "Ch05 settings",
+            (0, 11): "TDC value correction for channel's time alignment",
+            (12, 12): "Disable trigger generation",
+            (13, 31): "BITS_NOT_USED",
+        },
+        0x06:{
+            "brief": "Ch06 settings",
+            (0, 11): "TDC value correction for channel's time alignment",
+            (12, 12): "Disable trigger generation",
+            (13, 31): "BITS_NOT_USED",
+        },
+        0x07:{
+            "brief": "Ch07 settings",
+            (0, 11): "TDC value correction for channel's time alignment",
+            (12, 12): "Disable trigger generation",
+            (13, 31): "BITS_NOT_USED",
+        },
+        0x08:{
+            "brief": "Ch08 settings",
+            (0, 11): "TDC value correction for channel's time alignment",
+            (12, 12): "Disable trigger generation",
+            (13, 31): "BITS_NOT_USED",
+        },
+        0x09:{
+            "brief": "Ch09 settings",
+            (0, 11): "TDC value correction for channel's time alignment",
+            (12, 12): "Disable trigger generation",
+            (13, 31): "BITS_NOT_USED",
+        },
+        0x0A:{
+            "brief": "Ch10 settings",
+            (0, 11): "TDC value correction for channel's time alignment",
+            (12, 12): "Disable trigger generation",
+            (13, 31): "BITS_NOT_USED",
+        },
+        0x0B:{
+            "brief": "Ch11 settings",
+            (0, 11): "TDC value correction for channel's time alignment",
+            (12, 12): "Disable trigger generation",
+            (13, 31): "BITS_NOT_USED",
+        },
+        0x0C:{
+            "brief": "Ch12 settings",
+            (0, 11): "TDC value correction for channel's time alignment",
+            (12, 12): "Disable trigger generation",
+            (13, 31): "BITS_NOT_USED",
+        },
+
+        0x0D:{
+            "brief": "Ch01 ADC0 baseline",
+            (0, 11): "Ch01 ADC0 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x0E:{
+            "brief": "Ch01 ADC1 baseline",
+            (0, 11): "Ch01 ADC1 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x0D:{
+            "brief": "Ch01 ADC0 baseline",
+            (0, 11): "Ch01 ADC0 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x0E:{
+            "brief": "Ch01 ADC1 baseline",
+            (0, 11): "Ch01 ADC1 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x0F:{
+            "brief": "Ch02 ADC0 baseline",
+            (0, 11): "Ch02 ADC0 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x10:{
+            "brief": "Ch02 ADC1 baseline",
+            (0, 11): "Ch02 ADC1 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x11:{
+            "brief": "Ch03 ADC0 baseline",
+            (0, 11): "Ch03 ADC0 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x12:{
+            "brief": "Ch03 ADC1 baseline",
+            (0, 11): "Ch03 ADC1 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x13:{
+            "brief": "Ch04 ADC0 baseline",
+            (0, 11): "Ch04 ADC0 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x14:{
+            "brief": "Ch04 ADC1 baseline",
+            (0, 11): "Ch04 ADC1 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x15:{
+            "brief": "Ch05 ADC0 baseline",
+            (0, 11): "Ch05 ADC0 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x16:{
+            "brief": "Ch05 ADC1 baseline",
+            (0, 11): "Ch05 ADC1 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x17:{
+            "brief": "Ch06 ADC0 baseline",
+            (0, 11): "Ch06 ADC0 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x18:{
+            "brief": "Ch06 ADC1 baseline",
+            (0, 11): "Ch06 ADC1 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x19:{
+            "brief": "Ch07 ADC0 baseline",
+            (0, 11): "Ch07 ADC0 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x1A:{
+            "brief": "Ch07 ADC1 baseline",
+            (0, 11): "Ch07 ADC1 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x1B:{
+            "brief": "Ch08 ADC0 baseline",
+            (0, 11): "Ch08 ADC0 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x1C:{
+            "brief": "Ch08 ADC1 baseline",
+            (0, 11): "Ch08 ADC1 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x1D:{
+            "brief": "Ch09 ADC0 baseline",
+            (0, 11): "Ch09 ADC0 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x1E:{
+            "brief": "Ch09 ADC1 baseline",
+            (0, 11): "Ch09 ADC1 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x1F:{
+            "brief": "Ch10 ADC0 baseline",
+            (0, 11): "Ch10 ADC0 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x20:{
+            "brief": "Ch10 ADC1 baseline",
+            (0, 11): "Ch10 ADC1 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x21:{
+            "brief": "Ch11 ADC0 baseline",
+            (0, 11): "Ch11 ADC0 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x22:{
+            "brief": "Ch11 ADC1 baseline",
+            (0, 11): "Ch11 ADC1 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x23:{
+            "brief": "Ch12 ADC0 baseline",
+            (0, 11): "Ch12 ADC0 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x24:{
+            "brief": "Ch12 ADC1 baseline",
+            (0, 11): "Ch12 ADC1 baseline",
+            (12, 31): "BITS_NOT_USED",
+        },
+
+        0x25:{
+            "brief": "Ch01 ADC0 range correction (scaling factor)",
+            (0, 11): "Ch01 ADC0 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x26:{
+            "brief": "Ch01 ADC1 range correction (scaling factor)",
+            (0, 11): "Ch01 ADC1 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x27:{
+            "brief": "Ch02 ADC0 range correction (scaling factor)",
+            (0, 11): "Ch02 ADC0 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x28:{
+            "brief": "Ch02 ADC1 range correction (scaling factor)",
+            (0, 11): "Ch02 ADC1 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x29:{
+            "brief": "Ch03 ADC0 range correction (scaling factor)",
+            (0, 11): "Ch03 ADC0 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x2A:{
+            "brief": "Ch03 ADC1 range correction (scaling factor)",
+            (0, 11): "Ch03 ADC1 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x2B:{
+            "brief": "Ch04 ADC0 range correction (scaling factor)",
+            (0, 11): "Ch04 ADC0 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x2C:{
+            "brief": "Ch04 ADC1 range correction (scaling factor)",
+            (0, 11): "Ch04 ADC1 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x2D:{
+            "brief": "Ch05 ADC0 range correction (scaling factor)",
+            (0, 11): "Ch05 ADC0 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x2E:{
+            "brief": "Ch05 ADC1 range correction (scaling factor)",
+            (0, 11): "Ch05 ADC1 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x2F:{
+            "brief": "Ch06 ADC0 range correction (scaling factor)",
+            (0, 11): "Ch06 ADC0 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x30:{
+            "brief": "Ch06 ADC1 range correction (scaling factor)",
+            (0, 11): "Ch06 ADC1 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x31:{
+            "brief": "Ch07 ADC0 range correction (scaling factor)",
+            (0, 11): "Ch07 ADC0 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x32:{
+            "brief": "Ch07 ADC1 range correction (scaling factor)",
+            (0, 11): "Ch07 ADC1 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x33:{
+            "brief": "Ch08 ADC0 range correction (scaling factor)",
+            (0, 11): "Ch08 ADC0 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x34:{
+            "brief": "Ch08 ADC1 range correction (scaling factor)",
+            (0, 11): "Ch08 ADC1 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x35:{
+            "brief": "Ch09 ADC0 range correction (scaling factor)",
+            (0, 11): "Ch09 ADC0 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x36:{
+            "brief": "Ch09 ADC1 range correction (scaling factor)",
+            (0, 11): "Ch09 ADC1 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x37:{
+            "brief": "Ch10 ADC0 range correction (scaling factor)",
+            (0, 11): "Ch10 ADC0 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x38:{
+            "brief": "Ch10 ADC1 range correction (scaling factor)",
+            (0, 11): "Ch10 ADC1 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x39:{
+            "brief": "Ch11 ADC0 range correction (scaling factor)",
+            (0, 11): "Ch11 ADC0 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x3A:{
+            "brief": "Ch11 ADC1 range correction (scaling factor)",
+            (0, 11): "Ch11 ADC1 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x3B:{
+            "brief": "Ch12 ADC0 range correction (scaling factor)",
+            (0, 11): "Ch12 ADC0 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x3C:{
+            "brief": "Ch12 ADC1 range correction (scaling factor)",
+            (0, 11): "Ch12 ADC1 range correction (scaling factor)",
+            (12, 31): "BITS_NOT_USED",
+        },
+
+        
+        0x3D:{
+            "brief": "TRG charge levels",
+            (0, 11): "high level (max amplitude)",
+            (12, 15): "low level (min amplitude)",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x3E:{
+            "brief": "TDC phase auto fine tuning result",
+            (0, 7): "TDC1",
+            (8, 15): "TDC2",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x3F:{
+            "brief": "TDC phase auto fine tuning result",
+            (0, 7): "TDC3",
+            (8, 31): "BITS_NOT_USED",
+        },
+
+        0x40:{
+            "brief": "Ch01 raw TDC data",
+            (0, 6): "value1",
+            (7, 7): "BITS_NOT_USED",
+            (8, 13): "value2",
+            (14, 31): "BITS_NOT_USED",
+        },
+        0x41:{
+            "brief": "Ch02 raw TDC data",
+            (0, 6): "value1",
+            (7, 7): "BITS_NOT_USED",
+            (8, 13): "value2",
+            (14, 31): "BITS_NOT_USED",
+        },
+        0x42:{
+            "brief": "Ch03 raw TDC data",
+            (0, 6): "value1",
+            (7, 7): "BITS_NOT_USED",
+            (8, 13): "value2",
+            (14, 31): "BITS_NOT_USED",
+        },
+        0x43:{
+            "brief": "Ch04 raw TDC data",
+            (0, 6): "value1",
+            (7, 7): "BITS_NOT_USED",
+            (8, 13): "value2",
+            (14, 31): "BITS_NOT_USED",
+        },
+        0x44:{
+            "brief": "Ch05 raw TDC data",
+            (0, 6): "value1",
+            (7, 7): "BITS_NOT_USED",
+            (8, 13): "value2",
+            (14, 31): "BITS_NOT_USED",
+        },
+        0x45:{
+            "brief": "Ch06 raw TDC data",
+            (0, 6): "value1",
+            (7, 7): "BITS_NOT_USED",
+            (8, 13): "value2",
+            (14, 31): "BITS_NOT_USED",
+        },
+        0x46:{
+            "brief": "Ch07 raw TDC data",
+            (0, 6): "value1",
+            (7, 7): "BITS_NOT_USED",
+            (8, 13): "value2",
+            (14, 31): "BITS_NOT_USED",
+        },
+        0x47:{
+            "brief": "Ch08 raw TDC data",
+            (0, 6): "value1",
+            (7, 7): "BITS_NOT_USED",
+            (8, 13): "value2",
+            (14, 31): "BITS_NOT_USED",
+        },
+        0x48:{
+            "brief": "Ch09 raw TDC data",
+            (0, 6): "value1",
+            (7, 7): "BITS_NOT_USED",
+            (8, 13): "value2",
+            (14, 31): "BITS_NOT_USED",
+        },
+        0x49:{
+            "brief": "Ch10 raw TDC data",
+            (0, 6): "value1",
+            (7, 7): "BITS_NOT_USED",
+            (8, 13): "value2",
+            (14, 31): "BITS_NOT_USED",
+        },
+        0x4A:{
+            "brief": "Ch11 raw TDC data",
+            (0, 6): "value1",
+            (7, 7): "BITS_NOT_USED",
+            (8, 13): "value2",
+            (14, 31): "BITS_NOT_USED",
+        },
+        0x4B:{
+            "brief": "Ch12 raw TDC data",
+            (0, 6): "value1",
+            (7, 7): "BITS_NOT_USED",
+            (8, 13): "value2",
+            (14, 31): "BITS_NOT_USED",
+        },
+
+                0x4C:{
+            "brief": "Ch01 ADC0 dispersion",
+            (0, 15): "Ch01 ADC0 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x4D:{
+            "brief": "Ch01 ADC1 dispersion",
+            (0, 15): "Ch01 ADC1 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x4E:{
+            "brief": "Ch02 ADC0 dispersion",
+            (0, 15): "Ch02 ADC0 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x4F:{
+            "brief": "Ch02 ADC1 dispersion",
+            (0, 15): "Ch02 ADC1 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x50:{
+            "brief": "Ch03 ADC0 dispersion",
+            (0, 15): "Ch03 ADC0 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x51:{
+            "brief": "Ch03 ADC1 dispersion",
+            (0, 15): "Ch03 ADC1 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x52:{
+            "brief": "Ch04 ADC0 dispersion",
+            (0, 15): "Ch04 ADC0 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x53:{
+            "brief": "Ch04 ADC1 dispersion",
+            (0, 15): "Ch04 ADC1 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x54:{
+            "brief": "Ch05 ADC0 dispersion",
+            (0, 15): "Ch05 ADC0 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x55:{
+            "brief": "Ch05 ADC1 dispersion",
+            (0, 15): "Ch05 ADC1 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x56:{
+            "brief": "Ch06 ADC0 dispersion",
+            (0, 15): "Ch06 ADC0 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x57:{
+            "brief": "Ch06 ADC1 dispersion",
+            (0, 15): "Ch06 ADC1 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x58:{
+            "brief": "Ch07 ADC0 dispersion",
+            (0, 15): "Ch07 ADC0 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x59:{
+            "brief": "Ch07 ADC1 dispersion",
+            (0, 15): "Ch07 ADC1 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x5A:{
+            "brief": "Ch08 ADC0 dispersion",
+            (0, 15): "Ch08 ADC0 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x5B:{
+            "brief": "Ch08 ADC1 dispersion",
+            (0, 15): "Ch08 ADC1 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x5C:{
+            "brief": "Ch09 ADC0 dispersion",
+            (0, 15): "Ch09 ADC0 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x5D:{
+            "brief": "Ch09 ADC1 dispersion",
+            (0, 15): "Ch09 ADC1 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x5E:{
+            "brief": "Ch10 ADC0 dispersion",
+            (0, 15): "Ch10 ADC0 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x5F:{
+            "brief": "Ch10 ADC1 dispersion",
+            (0, 15): "Ch10 ADC1 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x60:{
+            "brief": "Ch11 ADC0 dispersion",
+            (0, 15): "Ch11 ADC0 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x61:{
+            "brief": "Ch11 ADC1 dispersion",
+            (0, 15): "Ch11 ADC1 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x62:{
+            "brief": "Ch12 ADC0 dispersion",
+            (0, 15): "Ch12 ADC0 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x63:{
+            "brief": "Ch12 ADC1 dispersion",
+            (0, 15): "Ch12 ADC1 dispersion",
+            (16, 31): "BITS_NOT_USED",
+        },
+
+        0x64:{
+            "brief": "Ch01 ADC0 mean amplitude",
+            (0, 15): "Ch01 ADC0 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x65:{
+            "brief": "Ch01 ADC1 mean amplitude",
+            (0, 15): "Ch01 ADC1 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x66:{
+            "brief": "Ch02 ADC0 mean amplitude",
+            (0, 15): "Ch02 ADC0 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x67:{
+            "brief": "Ch02 ADC1 mean amplitude",
+            (0, 15): "Ch02 ADC1 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x68:{
+            "brief": "Ch03 ADC0 mean amplitude",
+            (0, 15): "Ch03 ADC0 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x69:{
+            "brief": "Ch03 ADC1 mean amplitude",
+            (0, 15): "Ch03 ADC1 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x6A:{
+            "brief": "Ch04 ADC0 mean amplitude",
+            (0, 15): "Ch04 ADC0 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x6B:{
+            "brief": "Ch04 ADC1 mean amplitude",
+            (0, 15): "Ch04 ADC1 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x6C:{
+            "brief": "Ch05 ADC0 mean amplitude",
+            (0, 15): "Ch05 ADC0 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x6D:{
+            "brief": "Ch05 ADC1 mean amplitude",
+            (0, 15): "Ch05 ADC1 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x6E:{
+            "brief": "Ch06 ADC0 mean amplitude",
+            (0, 15): "Ch06 ADC0 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x6F:{
+            "brief": "Ch06 ADC1 mean amplitude",
+            (0, 15): "Ch06 ADC1 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x70:{
+            "brief": "Ch07 ADC0 mean amplitude",
+            (0, 15): "Ch07 ADC0 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x71:{
+            "brief": "Ch07 ADC1 mean amplitude",
+            (0, 15): "Ch07 ADC1 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x72:{
+            "brief": "Ch08 ADC0 mean amplitude",
+            (0, 15): "Ch08 ADC0 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x73:{
+            "brief": "Ch08 ADC1 mean amplitude",
+            (0, 15): "Ch08 ADC1 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x74:{
+            "brief": "Ch09 ADC0 mean amplitude",
+            (0, 15): "Ch09 ADC0 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x75:{
+            "brief": "Ch09 ADC1 mean amplitude",
+            (0, 15): "Ch09 ADC1 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x76:{
+            "brief": "Ch10 ADC0 mean amplitude",
+            (0, 15): "Ch10 ADC0 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x77:{
+            "brief": "Ch10 ADC1 mean amplitude",
+            (0, 15): "Ch10 ADC1 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x78:{
+            "brief": "Ch11 ADC0 mean amplitude",
+            (0, 15): "Ch11 ADC0 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x79:{
+            "brief": "Ch11 ADC1 mean amplitude",
+            (0, 15): "Ch11 ADC1 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x7A:{
+            "brief": "Ch12 ADC0 mean amplitude",
+            (0, 15): "Ch12 ADC0 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x7B:{
+            "brief": "Ch12 ADC1 mean amplitude",
+            (0, 15): "Ch12 ADC1 mean amplitude",
+            (16, 31): "BITS_NOT_USED",
+        },
+
+        0x7C:{
+            "brief": "Channels mask",
+            (0, 11): "Channels mask",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x7D:{
+            "brief": "Channel ADC baseline is out of range",
+            (0, 11): "Channel ADC baseline is out of range",
+            (12, 31): "BITS_NOT_USED",
+        },
+        0x7E:{
+            "brief": "Histogramming control",
+            (0, 11): "BCID to filter",
+            (12, 12): "BCID filter is on",
+            (13, 13): "reset histograms",
+            (14, 14): "BITS_NOT_USED",
+            (15, 15): "Histogramming is on",
+            (16, 31): "BITS_NOT_USED",
+        },
+        0x7F:{
+            "brief": "Status bits, commands",
+            (0, 0): "main PLL locked",
+            (1, 1): "TDC1 PLL locked",
+            (2, 2): "TDC2 PLL locked",
+            (3, 3): "TDC3 PLL locked",
+            (4, 4): "GBT Rx ready",
+            (5, 5): "GBT receiver error",
+            (6, 6): "TDC1 sync error",
+            (7, 7): "TDC2 sync error",
+            (8, 8): "TDC3 sync error",
+            (9, 9): "reset counters C0..D7 and histograms",
+            (10, 10): "'TRG' counters mode",
+            (11, 11): "PM restart detected",
+            (12, 12): "GBT Rx phase error",
+            (13, 13): "BCID sync lost",
+            (14, 14): "dropping hits",
+            (15, 31): "BITS_NOT_USED" 
+        }
+
+    }
+
+    def __init__(self):
+            pass
+    @classmethod
+    def read_params(cls, reg_info, bit_start, len):
+            if (bit_start, bit_start+len-1) in reg_info:
+                return [reg_info["brief"], f"[{bit_start},{bit_start+len-1}] {reg_info[(bit_start, bit_start+len-1)]}"]
             else:
-                return [f"{cls.UnknownRegisterLabel:.<45}0x{address:08x}"]
+                start_aligned = False
+                params = [reg_info["brief"]]
+                for key, desc in reg_info.items():
+                        if key == "brief": 
+                            continue
+                        if key[0] < bit_start: 
+                            continue
+                        if key[0] == bit_start:
+                            start_aligned = True
+                        if key[0] > bit_start + len-1:
+                            break
+                        if key[1] > bit_start + len:
+                            params.append("Operation is not aligned with register layout")
+                            break
+                        if start_aligned == False:
+                            params.append("Operation is not aligned with register layout")
+                            break
+                        elif desc != "BITS_NOT_USED":
+                            params.append(f"[{key[0]}, {key[1]}]  {desc}")      
+                return params
+            
 
-        @classmethod 
-        def describe_read(cls, address):
-            return cls.get_register(address, 0,32)
-           
-        @classmethod
-        def describe_write(cls, address):
-            return cls.get_register(address,0,32)
+    UnknownRegisterLabel = "Unknown register"
+    @classmethod
+    def get_register(cls, address, bit_start, len):
+        if address in cls.tcm:
+            reg = cls.tcm[address]
+            params = cls.read_params(reg, bit_start, len)
+            return params
+        else:
+            return [f"{cls.UnknownRegisterLabel:.<45}0x{address:08x}"]
+
+    @classmethod 
+    def describe_read(cls, address):
+        return cls.get_register(address, 0,32)
         
-        @classmethod
-        def describe_RMWbits(cls, words):
-            address = words[0]
-            mask = words[1]
-            bit_ranges = cls.get_zero_bit_ranges(mask, 32)
-            bit_ranges = bit_ranges + cls.get_one_bit_ranges(words[2], 32)
-            bit_ranges = list(dict.fromkeys(bit_ranges))
-            descriptions = []
-            for bit_start, length in bit_ranges:
-                descriptions.extend(cls.get_register(address, bit_start, length))
-            return descriptions
-        
-        @classmethod
-        def describe_RMWsum(cls, words):
-            address = words[0]
-            mask = words[1]
-            bit_ranges = cls.get_zero_bit_ranges(mask, 32)
-            descriptions = []
-            for bit_start, length in bit_ranges:
-                descriptions.extend(cls.get_register(address, bit_start, length))
-            return descriptions
-              
-        
-        @classmethod
-        def get_zero_bit_ranges(cls, mask, bit_length):
-            bit_ranges = []
-            current_range_start = None
-            current_range_length = 0
+    @classmethod
+    def describe_write(cls, address):
+        return cls.get_register(address,0,32)
+    
+    @classmethod
+    def describe_RMWbits(cls, words):
+        address = words[0]
+        mask = words[1]
+        bit_ranges = cls.get_zero_bit_ranges(mask, 32)
+        bit_ranges = bit_ranges + cls.get_one_bit_ranges(words[2], 32)
+        bit_ranges = list(dict.fromkeys(bit_ranges))
+        descriptions = []
+        for bit_start, length in bit_ranges:
+            descriptions.extend(cls.get_register(address, bit_start, length))
+        return descriptions
+    
+    @classmethod
+    def describe_RMWsum(cls, words):
+        address = words[0]
+        mask = words[1]
+        bit_ranges = cls.get_zero_bit_ranges(mask, 32)
+        descriptions = []
+        for bit_start, length in bit_ranges:
+            descriptions.extend(cls.get_register(address, bit_start, length))
+        return descriptions
+            
+    
+    @classmethod
+    def get_zero_bit_ranges(cls, mask, bit_length):
+        bit_ranges = []
+        current_range_start = None
+        current_range_length = 0
 
-            for i in range(bit_length):
-                if (mask & (1 << i)) == 0:
-                    if current_range_start is None:
-                        current_range_start = i
-                    current_range_length += 1
-                else:
-                    if current_range_start is not None:
-                        bit_ranges.append((current_range_start, current_range_length))
-                        current_range_start = None
-                        current_range_length = 0
+        for i in range(bit_length):
+            if (mask & (1 << i)) == 0:
+                if current_range_start is None:
+                    current_range_start = i
+                current_range_length += 1
+            else:
+                if current_range_start is not None:
+                    bit_ranges.append((current_range_start, current_range_length))
+                    current_range_start = None
+                    current_range_length = 0
 
-            if current_range_start is not None:
-                bit_ranges.append((current_range_start, current_range_length))
+        if current_range_start is not None:
+            bit_ranges.append((current_range_start, current_range_length))
 
-            return bit_ranges
-        
-        @classmethod
-        def get_one_bit_ranges(cls, mask, bit_length):
-            bit_ranges = []
-            current_range_start = None
-            current_range_length = 0
+        return bit_ranges
+    
+    @classmethod
+    def get_one_bit_ranges(cls, mask, bit_length):
+        bit_ranges = []
+        current_range_start = None
+        current_range_length = 0
 
-            for i in range(bit_length):
-                if (mask & (1 << i)) != 0:
-                    if current_range_start is None:
-                        current_range_start = i
-                    current_range_length += 1
-                else:
-                    if current_range_start is not None:
-                        bit_ranges.append((current_range_start, current_range_length))
-                        current_range_start = None
-                        current_range_length = 0
+        for i in range(bit_length):
+            if (mask & (1 << i)) != 0:
+                if current_range_start is None:
+                    current_range_start = i
+                current_range_length += 1
+            else:
+                if current_range_start is not None:
+                    bit_ranges.append((current_range_start, current_range_length))
+                    current_range_start = None
+                    current_range_length = 0
 
-            if current_range_start is not None:
-                bit_ranges.append((current_range_start, current_range_length))
+        if current_range_start is not None:
+            bit_ranges.append((current_range_start, current_range_length))
 
-            return bit_ranges
+        return bit_ranges
 
 
 #print(RegisterMap.get_register(0x6A, 0, 4))
