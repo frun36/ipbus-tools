@@ -14,6 +14,7 @@ def main():
     parser = argparse.ArgumentParser(description="Converts an IPbus packet into the corresponding SWT sequence")
     
     parser.add_argument('filename', type=str, help='The IPbus packet filename')
+    parser.add_argument('-s', '--seq', action='store_true', help='Convert to FRED .sqc file format')
 
     args = parser.parse_args()
     
@@ -25,11 +26,12 @@ def main():
         sys.exit(1)
 
     packet = ipb.Packet.from_bytes(packet_bytes)
-    if(args.verbose):
-        print(packet)
 
     seq = SwtSequence.from_ipbus_packet(packet)
-    print(seq)
+    if args.seq:
+        print(repr(seq))
+    else:
+        print(str(seq))
     
 if __name__ == '__main__':
     main()
