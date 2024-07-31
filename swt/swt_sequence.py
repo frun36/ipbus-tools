@@ -21,7 +21,7 @@ class SwtSequence:
                    result += '\n'
                case _:
                    raise ValueError("Invalid transaction type value")
-        return result
+        return result[:-1]
 
     def __str__(self) -> str:
         result = ''
@@ -29,12 +29,12 @@ class SwtSequence:
             result += str(command)
             match command.type:
                case TransactionType.READ | TransactionType.READ_AND | TransactionType.READ_SUM:
-                   result += f',write\nread\n'
+                   result += f',write\\nread\\n'
                case TransactionType.WRITE | TransactionType.WRITE_OR:
-                   result += ',write\n'
+                   result += ',write\\n'
                case _:
                    raise ValueError("Invalid transaction type value")
-        return result
+        return result[:-2]
     
     def append_sequence(self, other):
         self.commands += other.commands
