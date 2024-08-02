@@ -143,9 +143,7 @@ def main():
     file_list = get_file_list("filtered_packets" if args.filtered else "packets")
     
     if not file_list:
-        stdscr.addstr(0, 0, "No .bin files found.")
-        stdscr.refresh()
-        stdscr.getch()
+        print("No .bin files found.")
         return
     
     index = len(file_list) - 1  # Start with the most recent file
