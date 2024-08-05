@@ -29,7 +29,7 @@ for packet in capture.sniff_continuously():
         
         with open("packets/" + filename, 'ab') as f:
             f.write(packet_bytes)
-        if not re.search("_res\\.bin", filename) and packet.label == "":
+        if not re.search("_res\\.bin", filename) and ipb_packet.label == "":
             with open("filtered_packets/" + filename, 'ab') as f:
                 f.write(packet_bytes)
     except ValueError as e:
