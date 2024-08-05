@@ -35,3 +35,17 @@ This module allows for converting raw IPbus packets into corresponding FIT-SWT s
 python3 -m swt.swt [-h] filename
 ```
 while in the `ipbus-tools` directory.
+
+## Notes
+Depending on your system (AGH's FLP), the following might be required:
+- running everything with `python3.12`
+- running `eavesdropper.py` with `sudo` to have permissions to the interface
+- change interface `IPBUS` in `eavesdropper.py` to `eno4`
+- a `config.ini` file in the directory from which you run `eavesdropper.py`, with contents like:
+```
+[tshark]
+tshark_path = /usr/local/bin/tshark
+
+[dumpcap]
+dumpcap_path = /usr/local/bin/dumpcap
+```
